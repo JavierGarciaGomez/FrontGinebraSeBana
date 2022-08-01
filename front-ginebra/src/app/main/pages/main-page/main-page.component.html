@@ -1,0 +1,45 @@
+<div class="main-img-wrapper">
+  <img src="assets/images/Ginebra.jpg" alt="" />
+</div>
+
+<div class="counters-wrapper">
+  <div class="counters">
+    <div class="counters--days counters--days-passed">
+      <div class="counters--days-heading">Último baño</div>
+      <div class="counters--days-date">26/07/2022</div>
+      <div class="counters--days-counter-num">2</div>
+      <div class="counters--days-counter-label">Días transcurridos</div>
+    </div>
+    <div class="counters--days counters--days-left">
+      <div class="counters--days-heading">Próximo baño</div>
+      <div class="counters--days-date">26/07/2022</div>
+      <div class="counters--days-counter-num">2</div>
+      <div class="counters--days-counter-label">Días faltantes</div>
+    </div>
+  </div>
+</div>
+
+<div class="main-button-wrapper">
+  <button mat-raised-button class="main-button">Registrar nuevo baño</button>
+</div>
+
+<div class="shower-data-table-wrapper">
+  <div class="shower-data-table">
+    <div class="shower-data-table--header">
+      <div class="shower-data-table--heading">Fecha</div>
+      <div class="shower-data-table--heading">Tipo</div>
+      <div class="shower-data-table--heading">Realizado por</div>
+      <div class="shower-data-table--heading">Champús</div>
+      <div class="shower-data-table--heading">Acciones</div>
+    </div>
+    <div *ngFor="let shower of showers" class="shower-data-table--row">
+      <div class="shower-data-table--cell">
+        {{ shower.date | date: "shortDate" }}
+      </div>
+      <div class="shower-data-table--cell">{{ shower.type }}</div>
+      <div class="shower-data-table--cell">{{ shower.doneBy }}</div>
+      <div class="shower-data-table--cell">{{ shower.shampoos }}</div>
+      <div class="shower-data-table--cell">Editar | Borrar</div>
+    </div>
+  </div>
+</div>

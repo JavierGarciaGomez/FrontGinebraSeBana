@@ -1,0 +1,24 @@
+<mat-toolbar class="navbar">
+  <div class="left">
+    <div class="logo"><span routerLink="/">GINEBRA SE BAÑA</span></div>
+  </div>
+  <div class="navbar--right">
+    <div class="menu-group" routerLink="petProfile">
+      <span>Mascota</span>
+      <div class="menu-group--img">
+        <img src="assets/images/Ginebra.jpg" alt="" />
+      </div>
+    </div>
+
+    <div class="menu-group" routerLink="userProfile">
+      <span>Perfil</span>
+      <div class="menu-group--img">
+        <img src="assets/images/me.png" alt="" />
+      </div>
+    </div>
+
+    <a routerLink="/auth">
+      <mat-icon>logout</mat-icon>
+    </a>
+  </div>
+</mat-toolbar>
