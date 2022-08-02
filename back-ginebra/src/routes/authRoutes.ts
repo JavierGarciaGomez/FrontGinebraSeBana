@@ -1,7 +1,14 @@
 import express, { Router, Request, Response } from "express";
-import { userLogin, createUser } from "../controllers/authController";
+import {
+  userLogin,
+  createUser,
+  updateUser,
+} from "../controllers/authController";
+import { check } from "express-validator";
+import { fieldValidator } from "../middlewares/fieldValidator";
+import { validateJwt } from "../helpers/validateJwt";
+import { changePassword } from "../controllers/authController";
 
-// const { check } = require("express-validator");
 // const passport = require("passport");
 
 // const {
@@ -60,11 +67,42 @@ export const authRoutes = Router();
 // CREATE USER
 authRoutes.post(
   "/",
-  // [
-  //   check("email", "no es una forma de email correcta").isEmail(),
-  //   fieldValidator,
-  // ],
+  [
+    check(
+      "username",
+      "El nombre de usuario debe tener entre 4 y 16 caracteres"
+    ).isLength({ min: 4, max: 16 }),
+    check("email", "no es una forma de email correcta").isEmail(),
+    fieldValidator,
+  ],
   createUser
+);
+
+// UPDATE USER
+authRoutes.put(
+  "/:userId",
+  [
+    check(
+      "username",
+      "El nombre de usuario debe tener entre 4 y 16 caracteres"
+    ).isLength({ min: 4, max: 16 }),
+    check("email", "no es una forma de email correcta").isEmail(),
+    fieldValidator,
+  ],
+  validateJwt,
+  updateUser
+);
+
+// CHANGE PASSWORD
+authRoutes.patch(
+  "/changepass/:userId",
+  [
+    check("previousPassword", "El password anterir es necesario").notEmpty(),
+    check("newPassword", "El password anterir es necesario").notEmpty(),
+    fieldValidator,
+  ],
+  validateJwt,
+  changePassword
 );
 
 // // LOGIN

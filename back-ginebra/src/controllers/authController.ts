@@ -1,28 +1,168 @@
 import { Router, Request, Response } from "express";
 import User from "../models/User";
+import bcrypt from "bcrypt";
+import { generateJwt } from "../helpers/generateJwt";
+import {
+  IGetUserAuthInfoRequest,
+  IGetUserAuthRequest,
+} from "../interfaces/interfaces";
 
 export const createUser = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    if (!req.body.email || !req.body.password) {
+    const { username, email, password, role } = req.body;
+
+    if (!username || !email || !password) {
       return res
         .status(400)
-        .json({ msg: "Please. Send your email and password" });
+        .json({ msg: "Please. Send your username, email and password" });
     }
-
-    const { email, password } = req.body;
 
     let user = await User.findOne({ email });
+    if (!user) user = await User.findOne({ username });
 
     if (user) {
-      return res.status(400).json({ msg: "The User already Exists" });
+      return res
+        .status(400)
+        .json({ ok: false, msg: "The user already exists" });
     }
 
-    const newUser = new User({ email, password });
+    // encrypt pass
+    const salt = bcrypt.genSaltSync();
+    const cryptedPassword = bcrypt.hashSync(password, salt);
+
+    const newUser = new User({
+      username,
+      email,
+      password: cryptedPassword,
+      role,
+    });
     const savedUser = await newUser.save();
-    return res.status(201).json(savedUser);
+
+    // Generate JWT
+    const token = await generateJwt(
+      savedUser._id,
+      savedUser.username,
+      savedUser.email,
+      savedUser.role
+    );
+
+    return res.status(201).json({
+      ok: true,
+      message: "User created succesfully",
+      savedUser,
+      token,
+    });
+  } catch (error) {
+    const errorMessage = (error as Error).message;
+    console.log(errorMessage);
+    return res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+      error: errorMessage,
+    });
+  }
+};
+
+export const updateUser = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { userId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    // check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        msg: "No existe usuario con ese ese id",
+      });
+    }
+
+    // the password doesnt change
+    const { password } = user;
+    const userNewData = { ...req.body, password };
+
+    // is authorized to make changes
+    const isAuthorized =
+      userRequestRole === "admin" || userRequestUid === userId;
+    if (!isAuthorized) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estás autorizado",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
+      new: true,
+    });
+    return res.status(201).json({
+      ok: true,
+      message: "User updated succesfully",
+      updatedUser,
+    });
+  } catch (error) {
+    const errorMessage = (error as Error).message;
+    console.log(errorMessage);
+    return res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+      error: errorMessage,
+    });
+  }
+};
+
+export const changePassword = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { userId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    // check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        msg: "No existe usuario con ese ese id",
+      });
+    }
+
+    // TODO check previous password
+
+    // the password doesnt change
+    const { newPassword } = req.body;
+    // encrypt pass
+    const salt = bcrypt.genSaltSync();
+    const cryptedPassword = bcrypt.hashSync(newPassword, salt);
+
+    const userNewData = { ...req.body, password: cryptedPassword };
+
+    // is authorized to make changes
+    const isAuthorized =
+      userRequestRole === "admin" || userRequestUid === userId;
+    if (!isAuthorized) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estás autorizado",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
+      new: true,
+    });
+    return res.status(201).json({
+      ok: true,
+      message: "User updated succesfully",
+      updatedUser,
+    });
   } catch (error) {
     const errorMessage = (error as Error).message;
     console.log(errorMessage);

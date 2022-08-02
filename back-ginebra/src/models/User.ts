@@ -2,14 +2,17 @@ import { model, Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
+  username: string;
   email: string;
   password: string;
+  role: string;
   fullName: string;
   linkedPets: any;
   //   comparePassword: (password: string) => Promise<Boolean>;
 }
 
 const userSchema = new Schema({
+  username: { type: String, unique: true, required: true, trim: true },
   email: {
     type: String,
     unique: true,
@@ -21,10 +24,20 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  fullName: {
+  fullName: String,
+  role: {
     type: String,
+    default: "user",
   },
-  linkedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
+  // linkedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
+
+  linkedPets: [
+    {
+      linkedPet: { type: Schema.Types.ObjectId, ref: "Pet" },
+      viewAuthorization: Boolean,
+      editAuthorization: Boolean,
+    },
+  ],
 });
 
 // userSchema.pre<IUser>("save", async function (next) {
