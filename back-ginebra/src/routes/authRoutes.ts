@@ -3,6 +3,7 @@ import {
   userLogin,
   createUser,
   updateUser,
+  getUsers,
 } from "../controllers/authController";
 import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
@@ -64,9 +65,14 @@ export const authRoutes = Router();
 
 /************USERS CRUD********* */
 
+// GET USERS
+authRoutes.get("/allUsers", validateJwt, getUsers);
+
+// USER LOGIN
+authRoutes.post("/login", userLogin);
 // CREATE USER
 authRoutes.post(
-  "/",
+  "/createUser",
   [
     check(
       "username",
@@ -80,7 +86,7 @@ authRoutes.post(
 
 // UPDATE USER
 authRoutes.put(
-  "/:userId",
+  "/updateUser/:userId",
   [
     check(
       "username",
