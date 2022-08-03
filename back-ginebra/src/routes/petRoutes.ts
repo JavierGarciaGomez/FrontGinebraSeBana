@@ -9,7 +9,11 @@ import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
 import { changePassword } from "../controllers/authController";
-import { createPet, getPublicPets } from "../controllers/petController";
+import {
+  createPet,
+  getPublicPets,
+  getAllPets,
+} from "../controllers/petController";
 
 export const petRoutes = Router();
 

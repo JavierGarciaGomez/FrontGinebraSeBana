@@ -1,7 +1,8 @@
 import { Router, Request, Response } from "express";
-import User from "../models/User";
+
 import bcrypt from "bcrypt";
 import { generateJwt } from "../helpers/generateJwt";
+import { User } from "../models/User";
 import {
   IGetUserAuthInfoRequest,
   IGetUserAuthRequest,
@@ -77,7 +78,7 @@ export const createUser = async (
 
     // Generate JWT
     const token = await generateJwt(
-      savedUser._id,
+      savedUser._id.toString(),
       savedUser.username,
       savedUser.email,
       savedUser.role
@@ -227,7 +228,7 @@ export const userLogin = async (req: Request, res: Response) => {
 
     // Generate JWT
     const token = await generateJwt(
-      user!._id,
+      user!._id.toString(),
       user!.username,
       user!.email,
       user!.role

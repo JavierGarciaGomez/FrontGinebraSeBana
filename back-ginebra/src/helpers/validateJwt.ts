@@ -13,7 +13,6 @@ export const validateJwt = (
     // x-token headers
     const token = req.header("x-token");
 
-    console.log({ token });
     if (!token) {
       return res.status(401).json({
         ok: false,
@@ -23,7 +22,6 @@ export const validateJwt = (
     // decode the payload and add it to the request
     const payload = jwt.verify(token, process.env.SECRET_JWT_SEED!);
 
-    console.log({ payload });
     const user = payload as IUserToken;
     req.userReq = user;
   } catch (error) {

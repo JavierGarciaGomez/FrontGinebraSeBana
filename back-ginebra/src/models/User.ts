@@ -1,17 +1,8 @@
-import { model, Schema, Document } from "mongoose";
-import bcrypt from "bcrypt";
+import { model, Schema } from "mongoose";
 
-export interface IUser extends Document {
-  username: string;
-  email: string;
-  password: string;
-  role: string;
-  fullName: string;
-  linkedPets: any;
-  //   comparePassword: (password: string) => Promise<Boolean>;
-}
+import { IUser } from "../interfaces/interfaces";
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
   username: { type: String, unique: true, required: true, trim: true },
   email: {
     type: String,
@@ -36,6 +27,7 @@ const userSchema = new Schema({
       linkedPet: { type: Schema.Types.ObjectId, ref: "Pet" },
       viewAuthorization: Boolean,
       editAuthorization: Boolean,
+      creator: Boolean,
     },
   ],
 });
@@ -58,4 +50,4 @@ const userSchema = new Schema({
 //   return await bcrypt.compare(password, this.password);
 // };
 
-export default model<IUser>("User", userSchema);
+export const User = model<IUser>("User", userSchema);
