@@ -9,25 +9,31 @@ import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
 import { changePassword } from "../controllers/authController";
+
 import {
   createPet,
   getPublicPets,
   getAllPets,
+  updatePet,
 } from "../controllers/petController";
 
 export const petRoutes = Router();
+const routes = {
+  getPublicPetsRoute: "/getPublicPets",
+  getAllPetsRoute: "/getAllPets",
+  createPetRoute: "/createPet",
+  updatePetRoute: "/updatePet/:petId",
+  deletePetRoute: "/deletePet/:petId",
+};
 
-// TODO: getPublicPets
-// TODO: getAllPets
-// TODO: createPet
 // TODO: updatePet
 // TODO: deletePet
 // TODO: crudBath
 
-petRoutes.get("/getPublicPets", getPublicPets);
-petRoutes.get("/getAllPets", validateJwt, getAllPets);
+petRoutes.get(routes.getPublicPetsRoute, getPublicPets);
+petRoutes.get(routes.getAllPetsRoute, validateJwt, getAllPets);
 petRoutes.post(
-  "/createPet",
+  routes.createPetRoute,
   [
     check("petName", "El nombre de la mascota es necesario").isLength({
       min: 2,
@@ -41,6 +47,8 @@ petRoutes.post(
   validateJwt,
   createPet
 );
+petRoutes.put(routes.updatePetRoute, validateJwt, updatePet);
+
 // // route called by the callback if its a success
 // router.get("/googleLogin/success", (req, res) => {
 //   console.log("success", req.user);

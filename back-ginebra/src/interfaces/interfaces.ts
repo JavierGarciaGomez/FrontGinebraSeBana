@@ -56,8 +56,8 @@ export interface IPet {
   petName: string;
   bathPeriodicity: number;
   isPublic: boolean;
-  shampoos?: string[];
-  bathTypes?: string[];
-  linkedUsers?: ILinkedUser[];
-  registeredBaths?: IPetBath[];
+  shampoos: string[];
+  bathTypes: string[];
+  linkedUsers: ILinkedUser[];
+  registeredBaths: IPetBath[];
 }
