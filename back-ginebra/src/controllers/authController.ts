@@ -7,6 +7,40 @@ import {
   IGetUserAuthRequest,
 } from "../interfaces/interfaces";
 
+export const getUsers = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    console.log({ userReq });
+    const isAuthorized = userRequestRole === "admin";
+    if (!isAuthorized) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estás autorizado",
+      });
+    }
+
+    const users = await User.find();
+    return res.status(201).json({
+      ok: true,
+      message: "getUsers",
+      users,
+    });
+  } catch (error) {
+    const errorMessage = (error as Error).message;
+    console.log(errorMessage);
+    return res.status(500).json({
+      ok: false,
+      msg: "Hable con el administrador",
+      error: errorMessage,
+    });
+  }
+};
+
 export const createUser = async (
   req: Request,
   res: Response
@@ -177,6 +211,34 @@ export const changePassword = async (
 export const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    let isValid = false;
+    if (user) {
+      const validPassword = bcrypt.compareSync(password, user.password);
+      isValid = validPassword ? true : false;
+    }
+
+    if (!isValid) {
+      return res.status(400).json({
+        ok: false,
+        msg: "Email o contraseña incorrecta",
+      });
+    }
+
+    // Generate JWT
+    const token = await generateJwt(
+      user!._id,
+      user!.username,
+      user!.email,
+      user!.role
+    );
+
+    return res.status(201).json({
+      ok: true,
+      message: "Succesfully login",
+      token,
+      user,
+    });
     // check if collaborator or user
     // let user = await Collaborator.findOne({ email });
     // let userType = "collaborator";
