@@ -64,12 +64,31 @@ export const createPet = async (
     }
 
     const newPet = new Pet<IPet>({ ...req.body });
-    const savedPet = await newPet.save();
-    savedPet.linkedUsers.push({
+    newPet.linkedUsers.push({
       linkedUser: new mongoose.Types.ObjectId(userRequestUid),
       viewAuthorization: true,
       editAuthorization: true,
       creator: true,
+    });
+    const savedPet = await newPet.save();
+
+    // TODO: Link pet to user
+    const user = await User.findById(userRequestUid);
+    const linkedPets = { user };
+    user?.linkedPets?.push({
+      linkedPet: savedPet._id,
+      viewAuthorization: true,
+      editAuthorization: true,
+      creator: true,
+    });
+
+    const updatedUser = await User.findByIdAndUpdate(userRequestUid, user!, {
+      new: true,
+    });
+    return res.status(201).json({
+      ok: true,
+      message: "User updated succesfully",
+      updatedUser,
     });
 
     return res.status(201).json({
