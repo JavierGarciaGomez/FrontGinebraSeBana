@@ -7,46 +7,10 @@ import { Pet } from "../models/Pet";
 import { IPet, IGetUserAuthRequest } from "../interfaces/interfaces";
 import { catchUndefinedError } from "../helpers/utilities";
 import mongoose from "mongoose";
-
-export const getPublicPets = async (
-  req: IGetUserAuthRequest,
-  res: Response
-) => {
-  try {
-    const pets = await Pet.find({ isPublic: true });
-    return res.status(201).json({
-      ok: true,
-      message: "getPublicPets",
-      pets,
-    });
-  } catch (error) {
-    return catchUndefinedError(error, res);
-  }
-};
-
-export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
-  try {
-    const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
-
-    const isAuthorized = userRequestRole === "admin";
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
-
-    const pets = await Pet.find();
-    return res.status(201).json({
-      ok: true,
-      message: "getPublicPets",
-      pets,
-    });
-  } catch (error) {
-    return catchUndefinedError(error, res);
-  }
-};
+import {
+  notFoundResponse,
+  notAuthorizedResponse,
+} from "../helpers/resposeUtilities";
 
 export const createPet = async (
   req: IGetUserAuthRequest,
@@ -95,6 +59,72 @@ export const createPet = async (
       ok: true,
       message: "Pet created succesfully",
       savedPet,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const getPublicPets = async (
+  req: IGetUserAuthRequest,
+  res: Response
+) => {
+  try {
+    const pets = await Pet.find({ isPublic: true });
+    return res.status(201).json({
+      ok: true,
+      message: "getPublicPets",
+      pets,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
+  try {
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    const isAuthorized = userRequestRole === "admin";
+    if (!isAuthorized) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estás autorizado",
+      });
+    }
+
+    const pets = await Pet.find();
+    return res.status(201).json({
+      ok: true,
+      message: "getPublicPets",
+      pets,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const getPet = async (req: IGetUserAuthRequest, res: Response) => {
+  try {
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { petId } = req.params;
+
+    const pet = await Pet.findById(petId);
+    if (!pet) return notFoundResponse(res, "mascota");
+
+    const isALinkedUser = pet.linkedUsers.find(
+      (linkedUser) => linkedUser.linkedUser.toString() === userRequestUid
+    );
+
+    const isAdmin = userRequestRole === "admin";
+    if (!isAdmin && !isALinkedUser) return notAuthorizedResponse(res);
+
+    return res.status(201).json({
+      ok: true,
+      message: "getPet",
+      pet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);
