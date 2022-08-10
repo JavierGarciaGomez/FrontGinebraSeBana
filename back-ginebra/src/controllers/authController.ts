@@ -5,6 +5,10 @@ import { generateJwt } from "../helpers/generateJwt";
 import { User } from "../models/User";
 import { catchUndefinedError } from "../helpers/utilities";
 import {
+  existentObjectResponse,
+  invalidParamsResponse,
+} from "../helpers/resposeUtilities";
+import {
   notAuthorizedResponse,
   notFoundResponse,
 } from "../helpers/resposeUtilities";
@@ -13,40 +17,6 @@ import {
   IGetUserAuthRequest,
 } from "../interfaces/interfaces";
 
-export const getUsers = async (
-  req: IGetUserAuthRequest,
-  res: Response
-): Promise<Response> => {
-  try {
-    const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
-
-    console.log({ userReq });
-    const isAuthorized = userRequestRole === "admin";
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
-
-    const users = await User.find();
-    return res.status(201).json({
-      ok: true,
-      message: "getUsers",
-      users,
-    });
-  } catch (error) {
-    const errorMessage = (error as Error).message;
-    console.log(errorMessage);
-    return res.status(500).json({
-      ok: false,
-      msg: "Hable con el administrador",
-      error: errorMessage,
-    });
-  }
-};
-
 export const createUser = async (
   req: Request,
   res: Response
@@ -54,20 +24,16 @@ export const createUser = async (
   try {
     const { username, email, password, role } = req.body;
 
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ msg: "Please. Send your username, email and password" });
-    }
+    if (!username || !email || !password)
+      return invalidParamsResponse(
+        res,
+        "Por favor, envíe su nombre de usuario, email y contraseña"
+      );
 
     let user = await User.findOne({ email });
     if (!user) user = await User.findOne({ username });
 
-    if (user) {
-      return res
-        .status(400)
-        .json({ ok: false, msg: "The user already exists" });
-    }
+    if (user) return existentObjectResponse(res, "El usuario");
 
     // encrypt pass
     const salt = bcrypt.genSaltSync();
@@ -96,13 +62,54 @@ export const createUser = async (
       token,
     });
   } catch (error) {
-    const errorMessage = (error as Error).message;
-    console.log(errorMessage);
-    return res.status(500).json({
-      ok: false,
-      msg: "Hable con el administrador",
-      error: errorMessage,
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const getUsers = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const users = await User.find({}, { username: 1, email: 1 });
+    return res.status(201).json({
+      ok: true,
+      message: "getUsers",
+      users,
     });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const userLogin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    let isValid = false;
+    if (user) {
+      isValid = bcrypt.compareSync(password, user.password);
+    }
+
+    if (!isValid)
+      return invalidParamsResponse(res, "email o contraseña incorrecta");
+
+    // Generate JWT
+    const token = await generateJwt(
+      user!._id.toString(),
+      user!.username,
+      user!.email,
+      user!.role
+    );
+
+    return res.status(201).json({
+      ok: true,
+      message: "Succesfully login",
+      token,
+      user,
+    });
+  } catch (error) {
+    // uncatchedError(error, res);
   }
 };
 
@@ -114,16 +121,11 @@ export const updateUser = async (
     const { userId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const userNewData = { ...req.body };
 
-    // check if user exists
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");
 
-    // the password doesnt change
-    const { password } = user;
-    const userNewData = { ...req.body, password };
-
-    // is authorized to make changes
     const isAuthorized =
       userRequestRole === "admin" || userRequestUid === userId;
 
@@ -150,139 +152,32 @@ export const changePassword = async (
     const { userId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
-
-    // check if user exists
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        ok: false,
-        msg: "No existe usuario con ese ese id",
-      });
-    }
-
-    // TODO check previous password
-
-    // the password doesnt change
     const { newPassword } = req.body;
-    // encrypt pass
+
+    const user = await User.findById(userId);
+    if (!user) return notFoundResponse(res, "usuario");
+
     const salt = bcrypt.genSaltSync();
     const cryptedPassword = bcrypt.hashSync(newPassword, salt);
 
-    const userNewData = { ...req.body, password: cryptedPassword };
-
-    // is authorized to make changes
     const isAuthorized =
       userRequestRole === "admin" || userRequestUid === userId;
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
 
-    const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
-      new: true,
-    });
+    if (!isAuthorized) return notAuthorizedResponse(res);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: cryptedPassword },
+      {
+        new: true,
+      }
+    );
     return res.status(201).json({
       ok: true,
       message: "User updated succesfully",
       updatedUser,
     });
   } catch (error) {
-    const errorMessage = (error as Error).message;
-    console.log(errorMessage);
-    return res.status(500).json({
-      ok: false,
-      msg: "Hable con el administrador",
-      error: errorMessage,
-    });
-  }
-};
-
-export const userLogin = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    let isValid = false;
-    if (user) {
-      const validPassword = bcrypt.compareSync(password, user.password);
-      isValid = validPassword ? true : false;
-    }
-
-    if (!isValid) {
-      return res.status(400).json({
-        ok: false,
-        msg: "Email o contraseña incorrecta",
-      });
-    }
-
-    // Generate JWT
-    const token = await generateJwt(
-      user!._id.toString(),
-      user!.username,
-      user!.email,
-      user!.role
-    );
-
-    return res.status(201).json({
-      ok: true,
-      message: "Succesfully login",
-      token,
-      user,
-    });
-    // check if collaborator or user
-    // let user = await Collaborator.findOne({ email });
-    // let userType = "collaborator";
-    // if (!user) {
-    //   user = await User.findOne({ email });
-    //   userType = "user";
-    // }
-
-    // let isValid = false;
-
-    // if (user) {
-    //   const validPassword = bcrypt.compareSync(password, user.password);
-    //   if (validPassword) {
-    //     isValid = true;
-    //   }
-    // }
-
-    // if (!isValid) {
-    //   return res.status(400).json({
-    //     ok: false,
-    //     msg: "Email o contraseña incorrecta",
-    //   });
-    // }
-
-    // Generate JWT
-    // const token = await generateJWT(
-    //   user.id,
-    //   user.col_code,
-    //   user.role,
-    //   user.imgUrl
-    // );
-
-    // generate the log
-    // registerLog(userType, user, authTypes.login);
-
-    // res.json({
-    //   ok: true,
-    //   uid: user.id,
-    //   token,
-    //   col_code: user.col_code,
-    //   role: user.role,
-    //   imgUrl: user.imgUrl,
-    // });
-
-    res.json({
-      ok: true,
-      uid: "wa",
-      token: "wa",
-      col_code: "wa",
-      role: "wa",
-      imgUrl: "wa",
-    });
-  } catch (error) {
-    // uncatchedError(error, res);
+    return catchUndefinedError(error, res);
   }
 };

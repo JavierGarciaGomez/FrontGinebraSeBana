@@ -1,16 +1,15 @@
 import { Router, Request, Response } from "express";
-
-import bcrypt from "bcrypt";
-import { generateJwt } from "../helpers/generateJwt";
 import { User } from "../models/User";
 import { Pet } from "../models/Pet";
 import { IPet, IGetUserAuthRequest } from "../interfaces/interfaces";
-import { catchUndefinedError } from "../helpers/utilities";
+import { catchUndefinedError, linkUserToPet } from "../helpers/utilities";
 import mongoose from "mongoose";
 import {
   notFoundResponse,
   notAuthorizedResponse,
+  invalidParamsResponse,
 } from "../helpers/resposeUtilities";
+import { isAuthorizedToEditPet } from "../helpers/utilitiesValidations";
 
 export const createPet = async (
   req: IGetUserAuthRequest,
@@ -20,40 +19,49 @@ export const createPet = async (
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
     const { petName, bathPeriodicity, isPublic } = req.body;
-
-    if (!petName || !bathPeriodicity) {
-      return res.status(400).json({
-        msg: "El nombre de la mascota y la periodicidad del baño son necesarias",
-      });
-    }
-
     const newPet = new Pet<IPet>({ ...req.body });
-    newPet.linkedUsers.push({
-      linkedUser: new mongoose.Types.ObjectId(userRequestUid),
-      viewAuthorization: true,
-      editAuthorization: true,
-      creator: true,
-    });
+
+    if (!petName || !bathPeriodicity)
+      return invalidParamsResponse(
+        res,
+        "El nombre de la mascota y la periodicidad del baño son necesarias"
+      );
+
+    // newPet.linkedUsers.push({
+    //   linkedUser: new mongoose.Types.ObjectId(userRequestUid),
+    //   viewAuthorization: true,
+    //   editAuthorization: true,
+    //   creator: true,
+    // });
     const savedPet = await newPet.save();
 
-    // TODO: Link pet to user
-    const user = await User.findById(userRequestUid);
-    const linkedPets = { user };
-    user?.linkedPets?.push({
-      linkedPet: savedPet._id,
-      viewAuthorization: true,
-      editAuthorization: true,
-      creator: true,
-    });
+    const updatedPet = await linkUserToPet(
+      savedPet.id,
+      userRequestUid,
+      true,
+      true,
+      true
+    );
 
-    const updatedUser = await User.findByIdAndUpdate(userRequestUid, user!, {
-      new: true,
-    });
+    console.log({ updatedPet });
+
+    // const user = await User.findById(userRequestUid);
+    //
+    // user?.linkedPets?.push({
+    //   linkedPet: savedPet._id,
+    //   viewAuthorization: true,
+    //   editAuthorization: true,
+    //   creator: true,
+    // });
+
+    // const updatedUser = await User.findByIdAndUpdate(userRequestUid, user!, {
+    //   new: true,
+    // });
 
     return res.status(201).json({
       ok: true,
       message: "Pet created succesfully",
-      savedPet,
+      savedPet: updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);
@@ -100,6 +108,30 @@ export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
   }
 };
 
+export const getLinkedPetsByUser = async (
+  req: IGetUserAuthRequest,
+  res: Response
+) => {
+  try {
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { userId } = req.params;
+
+    const users = await Pet.find({ "linkedUsers.linkedUser": userId }).populate(
+      { path: "linkedUsers.linkedUser", select: "username email" }
+    );
+
+    console.log({ users });
+    return res.status(201).json({
+      ok: true,
+      message: "getLinkPetsByUser",
+      users,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
 export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;
@@ -134,21 +166,56 @@ export const updatePet = async (
     const { petId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const petNewData = { ...req.body };
 
     const pet = await Pet.findById(petId);
     if (!pet) return notFoundResponse(res, "mascota");
 
-    const petNewData = { ...req.body };
-    console.log({ petNewData });
+    // isAuthorized
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+    const isAdmin = userRequestRole === "admin";
+
+    // console.log({ isAdmin, isAuthorizedToEdit, pet });
+    if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
+
+    // TODO: Test
+    const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
+      new: true,
+    });
+
+    console.log({ updatedPet });
+
+    return res.status(201).json({
+      ok: true,
+      message: "Pet updated succesfully",
+      updatedPet,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const linkUser = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { petId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const userIdToLink = { ...req.body };
+
+    const pet = await Pet.findById(petId);
+    if (!pet) return notFoundResponse(res, "mascota");
+
+    // TODO: Doing
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
 
     // isAuthorized
-    const isALinkedUser = pet.linkedUsers.find(
-      (linkedUser) => linkedUser.linkedUser.toString() === userRequestUid
-    );
     const isAdmin = userRequestRole === "admin";
-    if (!isAdmin && !isALinkedUser) return notAuthorizedResponse(res);
+    if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
 
-    const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
+    const updatedPet = await Pet.findByIdAndUpdate(petId, userIdToLink, {
       new: true,
     });
 

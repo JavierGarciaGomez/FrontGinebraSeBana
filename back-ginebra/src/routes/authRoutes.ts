@@ -10,6 +10,76 @@ import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
 import { changePassword } from "../controllers/authController";
 
+export const authRoutes = Router();
+const routes = {
+  createUser: "/createUser",
+  getUsers: "/getUsers",
+  login: "/login",
+  updateUser: "/updateUser/:userId",
+  changePass: "/changepass/:userId",
+  renewToken: "/renewToken/",
+};
+
+/************USERS CRUD********* */
+// CREATE USER
+authRoutes.post(
+  routes.createUser,
+  [
+    check(
+      "username",
+      "El nombre de usuario debe tener entre 4 y 16 caracteres"
+    ).isLength({ min: 4, max: 16 }),
+    check("email", "no es una forma de email correcta").isEmail(),
+    fieldValidator,
+  ],
+  createUser
+);
+
+// GET USERS
+authRoutes.get("/allUsers", getUsers);
+
+// USER LOGIN
+authRoutes.post("/login", userLogin);
+
+// authRoutes.get("/renew", validateJwt, userRenewToken);
+
+// UPDATE USER
+authRoutes.put("/updateUser/:userId", validateJwt, updateUser);
+
+// CHANGE PASSWORD
+authRoutes.patch(
+  "/changepass/:userId",
+  [
+    check("previousPassword", "El password anterir es necesario").notEmpty(),
+    check("newPassword", "El password anterir es necesario").notEmpty(),
+    fieldValidator,
+  ],
+  validateJwt,
+  changePassword
+);
+
+// // LOGIN
+// router.post(
+//   "/",
+//   [
+//     check("email", "no es una forma de email correcta").isEmail(),
+//     fieldValidator,
+//   ],
+//   userLogin
+// );
+
+// // TODO: XXXX
+// router.get("/logout", (req, res) => {
+//   req.logout();
+//   res.redirect(`${process.env.CLIENT_URL}`);
+// });
+
+// // renew token
+
+// router.get("test", (req, res) => {});
+
+// module.exports = router;
+
 // const passport = require("passport");
 
 // const {
@@ -20,7 +90,6 @@ import { changePassword } from "../controllers/authController";
 // const { fieldValidator } = require("../middlewares/fieldValidator");
 // const { validateJwt } = require("../middlewares/validateJwt");
 
-export const authRoutes = Router();
 // wtf
 /************PASSPORT********* */
 
@@ -62,74 +131,3 @@ export const authRoutes = Router();
 //   }),
 //   googleAuth
 // );
-
-/************USERS CRUD********* */
-
-// GET USERS
-authRoutes.get("/allUsers", validateJwt, getUsers);
-
-// USER LOGIN
-authRoutes.post("/login", userLogin);
-// CREATE USER
-authRoutes.post(
-  "/createUser",
-  [
-    check(
-      "username",
-      "El nombre de usuario debe tener entre 4 y 16 caracteres"
-    ).isLength({ min: 4, max: 16 }),
-    check("email", "no es una forma de email correcta").isEmail(),
-    fieldValidator,
-  ],
-  createUser
-);
-
-// UPDATE USER
-authRoutes.put(
-  "/updateUser/:userId",
-  [
-    check(
-      "username",
-      "El nombre de usuario debe tener entre 4 y 16 caracteres"
-    ).isLength({ min: 4, max: 16 }),
-    check("email", "no es una forma de email correcta").isEmail(),
-    fieldValidator,
-  ],
-  validateJwt,
-  updateUser
-);
-
-// CHANGE PASSWORD
-authRoutes.patch(
-  "/changepass/:userId",
-  [
-    check("previousPassword", "El password anterir es necesario").notEmpty(),
-    check("newPassword", "El password anterir es necesario").notEmpty(),
-    fieldValidator,
-  ],
-  validateJwt,
-  changePassword
-);
-
-// // LOGIN
-// router.post(
-//   "/",
-//   [
-//     check("email", "no es una forma de email correcta").isEmail(),
-//     fieldValidator,
-//   ],
-//   userLogin
-// );
-
-// // TODO: XXXX
-// router.get("/logout", (req, res) => {
-//   req.logout();
-//   res.redirect(`${process.env.CLIENT_URL}`);
-// });
-
-// // renew token
-// router.get("/renew", validateJwt, userRenewToken);
-
-// router.get("test", (req, res) => {});
-
-// module.exports = router;
