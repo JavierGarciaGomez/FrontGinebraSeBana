@@ -49,11 +49,6 @@ export const createPet = async (
     const updatedUser = await User.findByIdAndUpdate(userRequestUid, user!, {
       new: true,
     });
-    return res.status(201).json({
-      ok: true,
-      message: "User updated succesfully",
-      updatedUser,
-    });
 
     return res.status(201).json({
       ok: true,
@@ -105,7 +100,7 @@ export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
   }
 };
 
-export const getPet = async (req: IGetUserAuthRequest, res: Response) => {
+export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
@@ -131,222 +126,40 @@ export const getPet = async (req: IGetUserAuthRequest, res: Response) => {
   }
 };
 
-export const updatePet = async (req: IGetUserAuthRequest, res: Response) => {
+export const updatePet = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
   try {
+    const { petId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
 
-    const isAuthorized = userRequestRole === "admin";
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
+    const pet = await Pet.findById(petId);
+    if (!pet) return notFoundResponse(res, "mascota");
 
-    const pets = await Pet.find();
+    const petNewData = { ...req.body };
+    console.log({ petNewData });
+
+    // isAuthorized
+    const isALinkedUser = pet.linkedUsers.find(
+      (linkedUser) => linkedUser.linkedUser.toString() === userRequestUid
+    );
+    const isAdmin = userRequestRole === "admin";
+    if (!isAdmin && !isALinkedUser) return notAuthorizedResponse(res);
+
+    const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
+      new: true,
+    });
+
+    console.log({ updatedPet });
+
     return res.status(201).json({
       ok: true,
-      message: "getPublicPets",
-      pets,
+      message: "Pet updated succesfully",
+      updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);
   }
 };
-
-// export const updateUser = async (
-//   req: IGetUserAuthRequest,
-//   res: Response
-// ): Promise<Response> => {
-//   try {
-//     const { userId } = req.params;
-//     const { userReq } = req;
-//     const { role: userRequestRole, uid: userRequestUid } = userReq!;
-
-//     // check if user exists
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({
-//         ok: false,
-//         msg: "No existe usuario con ese ese id",
-//       });
-//     }
-
-//     // the password doesnt change
-//     const { password } = user;
-//     const userNewData = { ...req.body, password };
-
-//     // is authorized to make changes
-//     const isAuthorized =
-//       userRequestRole === "admin" || userRequestUid === userId;
-//     if (!isAuthorized) {
-//       return res.status(401).json({
-//         ok: false,
-//         msg: "No estás autorizado",
-//       });
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
-//       new: true,
-//     });
-//     return res.status(201).json({
-//       ok: true,
-//       message: "User updated succesfully",
-//       updatedUser,
-//     });
-//   } catch (error) {
-//     const errorMessage = (error as Error).message;
-//     console.log(errorMessage);
-//     return res.status(500).json({
-//       ok: false,
-//       msg: "Hable con el administrador",
-//       error: errorMessage,
-//     });
-//   }
-// };
-
-// export const changePassword = async (
-//   req: IGetUserAuthRequest,
-//   res: Response
-// ): Promise<Response> => {
-//   try {
-//     const { userId } = req.params;
-//     const { userReq } = req;
-//     const { role: userRequestRole, uid: userRequestUid } = userReq!;
-
-//     // check if user exists
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({
-//         ok: false,
-//         msg: "No existe usuario con ese ese id",
-//       });
-//     }
-
-//     // TODO check previous password
-
-//     // the password doesnt change
-//     const { newPassword } = req.body;
-//     // encrypt pass
-//     const salt = bcrypt.genSaltSync();
-//     const cryptedPassword = bcrypt.hashSync(newPassword, salt);
-
-//     const userNewData = { ...req.body, password: cryptedPassword };
-
-//     // is authorized to make changes
-//     const isAuthorized =
-//       userRequestRole === "admin" || userRequestUid === userId;
-//     if (!isAuthorized) {
-//       return res.status(401).json({
-//         ok: false,
-//         msg: "No estás autorizado",
-//       });
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
-//       new: true,
-//     });
-//     return res.status(201).json({
-//       ok: true,
-//       message: "User updated succesfully",
-//       updatedUser,
-//     });
-//   } catch (error) {
-//     const errorMessage = (error as Error).message;
-//     console.log(errorMessage);
-//     return res.status(500).json({
-//       ok: false,
-//       msg: "Hable con el administrador",
-//       error: errorMessage,
-//     });
-//   }
-// };
-
-// export const userLogin = async (req: Request, res: Response) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-//     let isValid = false;
-//     if (user) {
-//       const validPassword = bcrypt.compareSync(password, user.password);
-//       isValid = validPassword ? true : false;
-//     }
-
-//     if (!isValid) {
-//       return res.status(400).json({
-//         ok: false,
-//         msg: "Email o contraseña incorrecta",
-//       });
-//     }
-
-//     // Generate JWT
-//     const token = await generateJwt(
-//       user!._id.toString(),
-//       user!.username,
-//       user!.email,
-//       user!.role
-//     );
-
-//     return res.status(201).json({
-//       ok: true,
-//       message: "Succesfully login",
-//       token,
-//       user,
-//     });
-//     // check if collaborator or user
-//     // let user = await Collaborator.findOne({ email });
-//     // let userType = "collaborator";
-//     // if (!user) {
-//     //   user = await User.findOne({ email });
-//     //   userType = "user";
-//     // }
-
-//     // let isValid = false;
-
-//     // if (user) {
-//     //   const validPassword = bcrypt.compareSync(password, user.password);
-//     //   if (validPassword) {
-//     //     isValid = true;
-//     //   }
-//     // }
-
-//     // if (!isValid) {
-//     //   return res.status(400).json({
-//     //     ok: false,
-//     //     msg: "Email o contraseña incorrecta",
-//     //   });
-//     // }
-
-//     // Generate JWT
-//     // const token = await generateJWT(
-//     //   user.id,
-//     //   user.col_code,
-//     //   user.role,
-//     //   user.imgUrl
-//     // );
-
-//     // generate the log
-//     // registerLog(userType, user, authTypes.login);
-
-//     // res.json({
-//     //   ok: true,
-//     //   uid: user.id,
-//     //   token,
-//     //   col_code: user.col_code,
-//     //   role: user.role,
-//     //   imgUrl: user.imgUrl,
-//     // });
-
-//     res.json({
-//       ok: true,
-//       uid: "wa",
-//       token: "wa",
-//       col_code: "wa",
-//       role: "wa",
-//       imgUrl: "wa",
-//     });
-//   } catch (error) {
-//     // uncatchedError(error, res);
-//   }
-// };

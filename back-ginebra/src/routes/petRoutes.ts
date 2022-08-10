@@ -2,7 +2,7 @@ import express, { Router, Request, Response } from "express";
 import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
-import { getPet } from "../controllers/petController";
+import { getPetById, getPetByName } from "../controllers/petController";
 
 import {
   createPet,
@@ -13,10 +13,11 @@ import {
 
 export const petRoutes = Router();
 const routes = {
+  createPetRoute: "/createPet",
   getPublicPetsRoute: "/getPublicPets",
   getAllPetsRoute: "/getAllPets",
-  getPet: "/getPet/:petId",
-  createPetRoute: "/createPet",
+  getPetById: "/getPetById/:petId",
+
   updatePetRoute: "/updatePet/:petId",
   deletePetRoute: "/deletePet/:petId",
 };
@@ -42,5 +43,5 @@ petRoutes.post(
 );
 petRoutes.get(routes.getPublicPetsRoute, getPublicPets);
 petRoutes.get(routes.getAllPetsRoute, validateJwt, getAllPets);
-petRoutes.get(routes.getPet, validateJwt, getPet);
+petRoutes.get(routes.getPetById, validateJwt, getPetById);
 petRoutes.put(routes.updatePetRoute, validateJwt, updatePet);

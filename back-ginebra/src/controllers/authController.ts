@@ -3,6 +3,11 @@ import { Router, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { generateJwt } from "../helpers/generateJwt";
 import { User } from "../models/User";
+import { catchUndefinedError } from "../helpers/utilities";
+import {
+  notAuthorizedResponse,
+  notFoundResponse,
+} from "../helpers/resposeUtilities";
 import {
   IGetUserAuthInfoRequest,
   IGetUserAuthRequest,
@@ -112,12 +117,7 @@ export const updateUser = async (
 
     // check if user exists
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        ok: false,
-        msg: "No existe usuario con ese ese id",
-      });
-    }
+    if (!user) return notFoundResponse(res, "usuario");
 
     // the password doesnt change
     const { password } = user;
@@ -126,12 +126,8 @@ export const updateUser = async (
     // is authorized to make changes
     const isAuthorized =
       userRequestRole === "admin" || userRequestUid === userId;
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
+
+    if (!isAuthorized) return notAuthorizedResponse(res);
 
     const updatedUser = await User.findByIdAndUpdate(userId, userNewData, {
       new: true,
@@ -142,13 +138,7 @@ export const updateUser = async (
       updatedUser,
     });
   } catch (error) {
-    const errorMessage = (error as Error).message;
-    console.log(errorMessage);
-    return res.status(500).json({
-      ok: false,
-      msg: "Hable con el administrador",
-      error: errorMessage,
-    });
+    return catchUndefinedError(error, res);
   }
 };
 
