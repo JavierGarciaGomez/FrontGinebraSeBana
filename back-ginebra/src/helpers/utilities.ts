@@ -16,18 +16,38 @@ export const linkUserToPet = async (
   userId: string,
   viewAuthorization: boolean,
   editAuthorization: boolean,
-  creator: boolean
+  creator: boolean = false
 ): Promise<IPet | null> => {
   const pet = await Pet.findById(petId);
 
-  pet?.linkedUsers.push({
-    linkedUser: new mongoose.Types.ObjectId(userId),
-    viewAuthorization,
-    editAuthorization,
-    creator,
+  let preexistenUser = false;
+
+  let newLinkedUsers = pet?.linkedUsers.map((element) => {
+    if (element.linkedUser._id.toString() === userId) {
+      console.log("IS PREEX");
+      preexistenUser = true;
+      element.editAuthorization = editAuthorization;
+      element.viewAuthorization = viewAuthorization;
+      element.creator = creator;
+    }
+    return element;
   });
 
-  return Pet.findByIdAndUpdate(petId, pet!, { new: true });
+  if (!preexistenUser) {
+    newLinkedUsers = [...pet!.linkedUsers];
+    newLinkedUsers.push({
+      linkedUser: new mongoose.Types.ObjectId(userId),
+      viewAuthorization,
+      editAuthorization,
+      creator,
+    });
+  }
+
+  return Pet.findByIdAndUpdate(
+    petId,
+    { linkedUsers: newLinkedUsers },
+    { new: true }
+  );
 };
 
 export const getPetByIdPopulateUser = async (petId: string) =>
@@ -36,8 +56,8 @@ export const getPetByIdPopulateUser = async (petId: string) =>
     select: "username email",
   });
 
-export const checkIfIsALinkedUser = (pet: IPet, userId: string) =>
-  pet.linkedUsers.find(
+export const checkIfIsALinkedUser = async (pet: IPet, userId: string) =>
+  await pet.linkedUsers.find(
     (linkedUser) => linkedUser.linkedUser._id.toString() === userId
   );
 
