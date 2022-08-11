@@ -29,3 +29,31 @@ export const linkUserToPet = async (
 
   return Pet.findByIdAndUpdate(petId, pet!, { new: true });
 };
+
+export const getPetByIdPopulateUser = async (petId: string) =>
+  await Pet.findById(petId).populate({
+    path: "linkedUsers.linkedUser",
+    select: "username email",
+  });
+
+export const checkIfIsALinkedUser = (pet: IPet, userId: string) =>
+  pet.linkedUsers.find(
+    (linkedUser) => linkedUser.linkedUser._id.toString() === userId
+  );
+
+export const isAuthorizedToEditPet = (
+  pet: IPet,
+  userRequestUid: string
+): boolean => {
+  const linkedUser = pet.linkedUsers.find((linkedUser) => {
+    console.log({ linkedId: linkedUser.linkedUser.toString(), userRequestUid });
+    if (
+      linkedUser.linkedUser.toString() === userRequestUid &&
+      linkedUser.editAuthorization
+    ) {
+      return linkedUser;
+    }
+  });
+  if (linkedUser) return true;
+  return false;
+};

@@ -14,14 +14,14 @@ import {
 
 export const petRoutes = Router();
 const routes = {
-  createPetRoute: "/createPet",
-  getPublicPetsRoute: "/getPublicPets",
-  getAllPetsRoute: "/getAllPets",
+  createPet: "/createPet",
+  getPublicPets: "/getPublicPets",
+  getAllPets: "/getAllPets",
   getPetById: "/getPetById/:petId",
   getLinkedPetsByUser: "/getLinkedPetsByUser/:userId",
-  updatePetRoute: "/updatePet/:petId",
+  updatePet: "/updatePet/:petId",
   linkUser: "/linkUser/:petId",
-  deletePetRoute: "/deletePet/:petId",
+  deletePet: "/deletePet/:petId",
 };
 
 // TODO: updatePet
@@ -29,7 +29,7 @@ const routes = {
 // TODO: crudBath
 
 petRoutes.post(
-  routes.createPetRoute,
+  routes.createPet,
   [
     check("petName", "El nombre de la mascota es necesario").isLength({
       min: 2,
@@ -43,8 +43,8 @@ petRoutes.post(
   validateJwt,
   createPet
 );
-petRoutes.get(routes.getPublicPetsRoute, getPublicPets);
-petRoutes.get(routes.getAllPetsRoute, validateJwt, getAllPets);
+petRoutes.get(routes.getPublicPets, getPublicPets);
+petRoutes.get(routes.getAllPets, validateJwt, getAllPets);
 petRoutes.get(routes.getLinkedPetsByUser, validateJwt, getLinkedPetsByUser);
 petRoutes.get(routes.getPetById, validateJwt, getPetById);
-petRoutes.put(routes.updatePetRoute, validateJwt, updatePet);
+petRoutes.put(routes.updatePet, validateJwt, updatePet);

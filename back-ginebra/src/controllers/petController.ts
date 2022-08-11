@@ -2,14 +2,19 @@ import { Router, Request, Response } from "express";
 import { User } from "../models/User";
 import { Pet } from "../models/Pet";
 import { IPet, IGetUserAuthRequest } from "../interfaces/interfaces";
-import { catchUndefinedError, linkUserToPet } from "../helpers/utilities";
+import {
+  catchUndefinedError,
+  linkUserToPet,
+  getPetByIdPopulateUser,
+  checkIfIsALinkedUser,
+} from "../helpers/utilities";
 import mongoose from "mongoose";
+import { isAuthorizedToEditPet } from "../helpers/utilities";
 import {
   notFoundResponse,
   notAuthorizedResponse,
   invalidParamsResponse,
 } from "../helpers/resposeUtilities";
-import { isAuthorizedToEditPet } from "../helpers/utilitiesValidations";
 
 export const createPet = async (
   req: IGetUserAuthRequest,
@@ -27,12 +32,6 @@ export const createPet = async (
         "El nombre de la mascota y la periodicidad del baño son necesarias"
       );
 
-    // newPet.linkedUsers.push({
-    //   linkedUser: new mongoose.Types.ObjectId(userRequestUid),
-    //   viewAuthorization: true,
-    //   editAuthorization: true,
-    //   creator: true,
-    // });
     const savedPet = await newPet.save();
 
     const updatedPet = await linkUserToPet(
@@ -42,21 +41,6 @@ export const createPet = async (
       true,
       true
     );
-
-    console.log({ updatedPet });
-
-    // const user = await User.findById(userRequestUid);
-    //
-    // user?.linkedPets?.push({
-    //   linkedPet: savedPet._id,
-    //   viewAuthorization: true,
-    //   editAuthorization: true,
-    //   creator: true,
-    // });
-
-    // const updatedUser = await User.findByIdAndUpdate(userRequestUid, user!, {
-    //   new: true,
-    // });
 
     return res.status(201).json({
       ok: true,
@@ -90,17 +74,12 @@ export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
 
     const isAuthorized = userRequestRole === "admin";
-    if (!isAuthorized) {
-      return res.status(401).json({
-        ok: false,
-        msg: "No estás autorizado",
-      });
-    }
+    if (!isAuthorized) return notAuthorizedResponse(res);
 
     const pets = await Pet.find();
     return res.status(201).json({
       ok: true,
-      message: "getPublicPets",
+      message: "getAllPets",
       pets,
     });
   } catch (error) {
@@ -114,14 +93,12 @@ export const getLinkedPetsByUser = async (
 ) => {
   try {
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
     const { userId } = req.params;
 
     const users = await Pet.find({ "linkedUsers.linkedUser": userId }).populate(
       { path: "linkedUsers.linkedUser", select: "username email" }
     );
 
-    console.log({ users });
     return res.status(201).json({
       ok: true,
       message: "getLinkPetsByUser",
@@ -138,13 +115,11 @@ export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
     const { petId } = req.params;
 
-    const pet = await Pet.findById(petId);
+    const pet = await getPetByIdPopulateUser(petId);
+
     if (!pet) return notFoundResponse(res, "mascota");
 
-    const isALinkedUser = pet.linkedUsers.find(
-      (linkedUser) => linkedUser.linkedUser.toString() === userRequestUid
-    );
-
+    const isALinkedUser = checkIfIsALinkedUser(pet, userRequestUid);
     const isAdmin = userRequestRole === "admin";
     if (!isAdmin && !isALinkedUser) return notAuthorizedResponse(res);
 
@@ -152,6 +127,7 @@ export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
       ok: true,
       message: "getPet",
       pet,
+      pet2: pet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);
@@ -175,15 +151,11 @@ export const updatePet = async (
     const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
     const isAdmin = userRequestRole === "admin";
 
-    // console.log({ isAdmin, isAuthorizedToEdit, pet });
     if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
 
-    // TODO: Test
     const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
       new: true,
     });
-
-    console.log({ updatedPet });
 
     return res.status(201).json({
       ok: true,
