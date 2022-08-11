@@ -49,7 +49,7 @@ export interface IPetBath {
   date: Date;
   bather?: { username: string; imgUrl: string };
   shampoos?: string[];
-  bathTypes: String;
+  bathType: String;
 }
 
 export interface IPet {

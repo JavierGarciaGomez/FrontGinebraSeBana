@@ -20,7 +20,7 @@ const petSchema = new Schema<IPet>({
       date: Date,
       bather: { username: String, imgUrl: String },
       shampoos: [String],
-      bathTypes: String,
+      bathType: String,
     },
   ],
 });

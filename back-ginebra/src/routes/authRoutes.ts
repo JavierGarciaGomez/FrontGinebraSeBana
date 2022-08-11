@@ -1,23 +1,25 @@
 import express, { Router, Request, Response } from "express";
 import {
-  userLogin,
+  login,
   createUser,
   updateUser,
   getUsers,
+  renewToken,
 } from "../controllers/authController";
 import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
-import { changePassword } from "../controllers/authController";
+import { changePassword, deleteUser } from "../controllers/authController";
 
 export const authRoutes = Router();
 const routes = {
   createUser: "/createUser",
   getUsers: "/getUsers",
   login: "/login",
+  renewToken: "/renewToken/",
   updateUser: "/updateUser/:userId",
   changePass: "/changepass/:userId",
-  renewToken: "/renewToken/",
+  deleteUser: "/deleteUser/:userId",
 };
 
 /************USERS CRUD********* */
@@ -34,29 +36,21 @@ authRoutes.post(
   ],
   createUser
 );
-
-// GET USERS
-authRoutes.get("/allUsers", getUsers);
-
-// USER LOGIN
-authRoutes.post("/login", userLogin);
-
-// authRoutes.get("/renew", validateJwt, userRenewToken);
-
-// UPDATE USER
-authRoutes.put("/updateUser/:userId", validateJwt, updateUser);
-
-// CHANGE PASSWORD
+authRoutes.get(routes.getUsers, getUsers);
+authRoutes.post(routes.login, login);
+authRoutes.get(routes.renewToken, validateJwt, renewToken);
+authRoutes.put(routes.updateUser, validateJwt, updateUser);
 authRoutes.patch(
-  "/changepass/:userId",
+  routes.changePass,
   [
-    check("previousPassword", "El password anterir es necesario").notEmpty(),
+    check("previousPassword", "El password anterior es necesario").notEmpty(),
     check("newPassword", "El password anterir es necesario").notEmpty(),
     fieldValidator,
   ],
   validateJwt,
   changePassword
 );
+authRoutes.delete(routes.deleteUser, validateJwt, deleteUser);
 
 // // LOGIN
 // router.post(

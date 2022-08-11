@@ -82,7 +82,7 @@ export const getUsers = async (
   }
 };
 
-export const userLogin = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -107,6 +107,24 @@ export const userLogin = async (req: Request, res: Response) => {
       message: "Succesfully login",
       token,
       user,
+    });
+  } catch (error) {
+    // uncatchedError(error, res);
+  }
+};
+
+export const renewToken = async (req: IGetUserAuthRequest, res: Response) => {
+  try {
+    const { userReq } = req;
+    const { uid, username, email, role } = userReq!;
+
+    const token = await generateJwt(uid, username, email, role);
+
+    return res.status(201).json({
+      ok: true,
+      message: "Token renewed",
+      token,
+      user: userReq,
     });
   } catch (error) {
     // uncatchedError(error, res);
@@ -176,6 +194,32 @@ export const changePassword = async (
       ok: true,
       message: "User updated succesfully",
       updatedUser,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const deleteUser = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { userId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    const user = await User.findById(userId);
+    if (!user) return notFoundResponse(res, "usuario");
+
+    const isAdmin = userRequestRole === "admin";
+    if (!isAdmin) return notAuthorizedResponse(res);
+
+    await User.findByIdAndDelete(userId);
+
+    return res.status(201).json({
+      ok: true,
+      message: "Usuario eliminado satisfactoriamente",
     });
   } catch (error) {
     return catchUndefinedError(error, res);

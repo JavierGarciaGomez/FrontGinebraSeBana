@@ -66,7 +66,6 @@ export const isAuthorizedToEditPet = (
   userRequestUid: string
 ): boolean => {
   const linkedUser = pet.linkedUsers.find((linkedUser) => {
-    console.log({ linkedId: linkedUser.linkedUser.toString(), userRequestUid });
     if (
       linkedUser.linkedUser.toString() === userRequestUid &&
       linkedUser.editAuthorization
@@ -75,5 +74,16 @@ export const isAuthorizedToEditPet = (
     }
   });
   if (linkedUser) return true;
+  return false;
+};
+
+export const checkIfUserIsCreator = (pet: IPet, userId: string): boolean => {
+  console.log({ pet, userId });
+  console.log({ linked: pet.linkedUsers });
+  const isCreator = pet.linkedUsers.find(
+    (linkedUser) =>
+      linkedUser.linkedUser.toString() === userId && linkedUser.creator
+  );
+  if (isCreator) return true;
   return false;
 };

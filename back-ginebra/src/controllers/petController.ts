@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { User } from "../models/User";
 import { Pet } from "../models/Pet";
-import { IPet, IGetUserAuthRequest } from "../interfaces/interfaces";
+import { IPet, IGetUserAuthRequest, IPetBath } from "../interfaces/interfaces";
 import {
   catchUndefinedError,
   linkUserToPet,
@@ -9,7 +9,10 @@ import {
   checkIfIsALinkedUser,
 } from "../helpers/utilities";
 import mongoose from "mongoose";
-import { isAuthorizedToEditPet } from "../helpers/utilities";
+import {
+  isAuthorizedToEditPet,
+  checkIfUserIsCreator,
+} from "../helpers/utilities";
 import { existentObjectResponse } from "../helpers/resposeUtilities";
 import {
   notFoundResponse,
@@ -150,7 +153,6 @@ export const updatePet = async (
     // isAuthorized
     const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
     const isAdmin = userRequestRole === "admin";
-
     if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
 
     const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
@@ -217,14 +219,23 @@ export const linkUser = async (
     const { petId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
-    // TODO: Doing
-    // {userId, view, edit}
-    const userLinkData = { ...req.body };
+    const userLinkData = { ...req.body }; // {userId, view, edit}
 
     const pet = await Pet.findById(petId);
     const user = await User.findById(userRequestUid);
 
     if (!pet || !user) return notFoundResponse(res, "mascota o usuario");
+
+    // isAuthorized
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+    const isAdmin = userRequestRole === "admin";
+    const isUserToEditCreator = checkIfUserIsCreator(
+      pet,
+      userLinkData.linkedUser
+    );
+
+    if (isUserToEditCreator || (!isAdmin && !isAuthorizedToEdit))
+      return notAuthorizedResponse(res);
 
     const updatedPet = await linkUserToPet(
       petId,
@@ -236,6 +247,72 @@ export const linkUser = async (
     return res.status(201).json({
       ok: true,
       message: "Pet updated succesfully",
+      updatedPet,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const deletePet = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { petId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+
+    const pet = await Pet.findById(petId);
+
+    if (!pet) return notFoundResponse(res, "mascota");
+
+    const isAdmin = userRequestRole === "admin";
+    const isCreator = checkIfUserIsCreator(pet, userRequestUid);
+    console.log({ isAdmin, isCreator });
+
+    if (!isCreator && !isAdmin) return notAuthorizedResponse(res);
+
+    await Pet.findByIdAndDelete(petId);
+
+    return res.status(201).json({
+      ok: true,
+      message: "Mascota eliminada satisfactoriamente",
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
+export const registerBath = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { petId } = req.params;
+    const { userReq } = req;
+    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const bathData: IPetBath = { ...req.body }; // bather, shampoos, bathTypes
+
+    bathData.date = new Date();
+
+    const pet = await Pet.findById(petId);
+    if (!pet) return notFoundResponse(res, "mascota");
+
+    const isAdmin = userRequestRole === "admin";
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+
+    if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
+
+    pet.registeredBaths.push(bathData);
+
+    const updatedPet = await Pet.findByIdAndUpdate(petId, pet, {
+      new: true,
+    });
+
+    return res.status(201).json({
+      ok: true,
+      message: "Bath registered correctly",
       updatedPet,
     });
   } catch (error) {
