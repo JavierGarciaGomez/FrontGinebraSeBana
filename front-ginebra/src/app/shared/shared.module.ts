@@ -5,9 +5,10 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { MaterialModule } from '../material/material.module';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
+import { WelcomePageComponent } from './pages/welcome-page/welcome-page.component';
 
 @NgModule({
-  declarations: [ErrorPageComponent, NavbarComponent, FooterComponent],
+  declarations: [ErrorPageComponent, NavbarComponent, FooterComponent, WelcomePageComponent],
   imports: [CommonModule, MaterialModule, RouterModule],
   exports: [NavbarComponent, FooterComponent],
 })

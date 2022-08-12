@@ -1,3 +1,13 @@
+/**********************************************************/
+/******************VARIABLES**********************************/
+/**********************************************************/
+$primary-color: #1e130c;
+$secondary-color: #9a8478;
+$identifier-border: red solid 2px;
+
+/**********************************************************/
+/******************GENERAL*********************************/
+/**********************************************************/
 * {
   margin: 0;
   padding: 0;
@@ -13,13 +23,10 @@ html {
   }
 }
 
-/* You can add global styles to this file, and also import other style files */
-
-* {
-  box-sizing: border-box;
+a {
+  text-decoration: none;
+  color: inherit;
 }
-$primary-color: #1e130c;
-$secondary-color: #9a8478;
 
 html,
 body {
@@ -30,101 +37,126 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.page-container {
-  min-height: 100vh;
-  background-color: red;
-  background: linear-gradient(104.1deg, #1e130c 16.17%, #9a8478 97.77%);
-  background-blend-mode: darken;
+/*************************************/
+/*************PAGES*******************/
+/*************************************/
+
+/*************WELCOME*****************/
+.welcome-header--wrapper{
+  margin: 0 auto;
+  
+  max-width: 80rem;  
+  margin-bottom: 4rem;
+
+  h1{
+    font-size: 7rem;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: -7px;
+    
+  }
 }
 
-.main-img-wrapper {
-  padding-top: 3.6rem;
-  margin-bottom: 3.6rem;
+.welcome-img--wrapper{
+  padding-top: 15rem;
+  margin-bottom: 3rem;
   display: flex;
   justify-content: center;
 
   img {
-    max-width: 56rem;
+    max-width: 20rem;
     border-radius: 2%;
     box-shadow: 0px 5px 20px 5px #050505;
-    @media (max-width: 600px) {
-      max-width: 40rem;
-    }
+    
   }
 }
 
-.navbar {
-  background-color: #1e130c;
-  color: rgb(229, 221, 221);
-  justify-content: space-between;
-  padding: 0 3.6rem;
-
-  &--right {
-    display: flex;
-    gap: 1.6rem;
-
-    a {
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .logo {
-    cursor: pointer;
-    font-weight: 600;
-    letter-spacing: -3px;
-    font-size: 2.4rem;
-
-    &:hover {
-      color: #e8e8e8;
-    }
-  }
-
-  .menu-group {
-    display: flex;
-    gap: 1.6rem;
-    align-items: center;
-    cursor: pointer;
-
-    span {
-      display: block;
-      @media (max-width: 600px) {
-        display: none;
-      }
-    }
-
-    &:hover {
-      color: #e8e8e8;
-      .menu-group--img {
-        border: 2px #e8e8e8 solid;
-      }
-    }
-
-    &--img {
-      display: flex;
-      justify-content: center;
-      width: 3.6rem;
-      height: 3.6rem;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px white solid;
-
-      img {
-        width: 100%;
-        // max-width: 90%;
-        border-radius: 2%;
-        box-shadow: 0px 5px 20px 5px #050505;
-        object-fit: cover;
-      }
-    }
+.welcome-intro--wrapper{
+  display: block;  
+  margin: 0 auto;  
+  max-width: 80rem;  
+  margin-bottom: 4rem;
+  padding: 2rem;  
+  p{
+    color: white;
+    font-size: 2rem;
+    line-height: 2rem;
   }
 }
 
+.welcome-buttons{
+  margin: 0 auto;
+  max-width: 40rem;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  
+  button{
+    background-color: $secondary-color;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+  
+
+}
+
+// border: $identifier-border;
+
+/*************AUTH*******************/
+
+.auth-container {
+  margin: 0 auto;
+  padding-top: 9rem;
+
+  max-width: 48rem;
+}
+
+.auth-wrapper {
+  background-color: white;
+  padding: 2.4rem;
+  border-radius: 1.5%;
+  box-shadow: 0px 5px 20px 5px #050505;
+}
+
+.auth-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.6rem;
+
+  .auth-heading {
+    font-size: 4rem;
+  }
+}
+
+.auth-form {
+  .form-inputs {
+    margin-bottom: 2.4rem;
+  }
+  .form-group {
+    margin-bottom: 1.6rem;
+    width: 100%;
+  }
+
+  .form-label {
+  }
+  .form-input {
+    padding-left: 1.6rem;
+    height: 3.6rem;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #d9d9d9;
+  }
+}
+/*************MAIN*******************/
 .counters-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: 3.6rem;
 }
+
 .counters {
   width: 50rem;
   display: flex;
@@ -167,38 +199,6 @@ body {
   }
   &--days-counter-label {
     text-align: center;
-  }
-}
-
-.main-button-wrapper {
-  margin-bottom: 3.6rem;
-  display: flex;
-  justify-content: center;
-
-  .main-button {
-    font-size: 2.4rem;
-    background-color: $secondary-color;
-    &:hover {
-      background-color: darken($secondary-color, 10%);
-    }
-
-    // margin: 0 auto;
-  }
-}
-
-.main-button-wrapper {
-  margin-bottom: 3.6rem;
-  display: flex;
-  justify-content: center;
-
-  .main-button {
-    font-size: 2.4rem;
-    background-color: $secondary-color;
-    &:hover {
-      background-color: darken($secondary-color, 10%);
-    }
-
-    // margin: 0 auto;
   }
 }
 
@@ -248,52 +248,7 @@ body {
   }
 }
 
-.auth-container {
-  margin: 0 auto;
-  padding-top: 9rem;
-
-  max-width: 48rem;
-}
-
-.auth-wrapper {
-  background-color: white;
-  padding: 2.4rem;
-  border-radius: 1.5%;
-
-  box-shadow: 0px 5px 20px 5px #050505;
-}
-
-.auth-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.6rem;
-
-  .auth-heading {
-    font-size: 40rem;
-  }
-}
-
-.auth-form {
-  .form-inputs {
-    margin-bottom: 2.4rem;
-  }
-  .form-group {
-    margin-bottom: 1.6rem;
-    width: 100%;
-  }
-
-  .form-label {
-  }
-  .form-input {
-    padding-left: 1.6rem;
-    height: 3.6rem;
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #d9d9d9;
-  }
-}
-
-// Profile
+/*************USER PROFILE*******************/
 .user-profile {
   &--wrapper {
     margin: 0 auto;
@@ -396,6 +351,7 @@ body {
   }
 }
 
+/*************PET PROFILE*******************/
 .pet-profile {
   &--wrapper {
     margin: 0 auto;
@@ -512,7 +468,138 @@ body {
   }
 }
 
-// SHARED COMPONENTS
+/*************************************/
+/*************COMPONENTS**************/
+/*************************************/
+
+/*************CONTAINERS AND WRAPPERS***************/
+
+.page-container {
+  min-height: 100vh;
+  background-color: red;
+  background: linear-gradient(104.1deg, #1e130c 16.17%, #9a8478 97.77%);
+  background-blend-mode: darken;
+}
+
+.main-img-wrapper {
+  padding-top: 3.6rem;
+  margin-bottom: 3.6rem;
+  display: flex;
+  justify-content: center;
+
+  img {
+    max-width: 56rem;
+    border-radius: 2%;
+    box-shadow: 0px 5px 20px 5px #050505;
+    @media (max-width: 600px) {
+      max-width: 40rem;
+    }
+  }
+}
+
+
+
+/*************NAVBAR*******************/
+.navbar {
+  background-color: #1e130c;
+  color: rgb(229, 221, 221);
+  justify-content: space-between;
+  padding: 0 3.6rem;
+
+  &--right {
+    display: flex;
+    gap: 1.6rem;
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .logo {
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: -3px;
+    font-size: 2.4rem;
+
+    &:hover {
+      color: #e8e8e8;
+    }
+  }
+
+  .menu-group {
+    display: flex;
+    gap: 1.6rem;
+    align-items: center;
+    cursor: pointer;
+
+    span {
+      display: block;
+      @media (max-width: 600px) {
+        display: none;
+      }
+    }
+
+    &:hover {
+      color: #e8e8e8;
+      .menu-group--img {
+        border: 2px #e8e8e8 solid;
+      }
+    }
+
+    &--img {
+      display: flex;
+      justify-content: center;
+      width: 3.6rem;
+      height: 3.6rem;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px white solid;
+
+      img {
+        width: 100%;
+        // max-width: 90%;
+        border-radius: 2%;
+        box-shadow: 0px 5px 20px 5px #050505;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+/*************BUTTONS*******************/
+.main-button-wrapper {
+  margin-bottom: 3.6rem;
+  display: flex;
+  justify-content: center;
+
+  .main-button {
+    font-size: 2.4rem;
+    background-color: $secondary-color;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+
+    // margin: 0 auto;
+  }
+}
+
+.main-button-wrapper {
+  margin-bottom: 3.6rem;
+  display: flex;
+  justify-content: center;
+
+  .main-button {
+    font-size: 2.4rem;
+    background-color: $secondary-color;
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+
+    // margin: 0 auto;
+  }
+}
+
 .main-button {
   font-size: 1.6rem;
   background-color: $secondary-color;
@@ -520,7 +607,10 @@ body {
     background-color: darken($secondary-color, 10%);
   }
 }
-// Utilities
+/*************************************/
+/*************UTILITIES**************/
+/*************************************/
+
 
 .u-w-100 {
   width: 100% !important;
@@ -536,11 +626,5 @@ body {
   margin-right: 2.4rem !important;
 }
 
-// GENERAL
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
 
 // MEDIA QUERY

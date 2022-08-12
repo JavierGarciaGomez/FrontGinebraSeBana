@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { WelcomePageComponent } from './shared/pages/welcome-page/welcome-page.component';
 
 const routes: Routes = [
   {
@@ -7,25 +8,10 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
   },
   {
-    path: '',
+    path: 'main',
     loadChildren: () => import('./main/main.module').then((m) => m.MainModule),
   },
-  // {
-  //   path: 'heros',
-  //   loadChildren: () =>
-  //     import('./heros/heros.module').then((m) => m.HerosModule),
-  //   canLoad: [AuthGuard],
-  //   canActivate: [AuthGuard],
-  // },
-  // {
-  //   path: '404',
-  //   component: ErrorPageComponent,
-  // },
-  // {
-  //   path: '**',
-  //   // component: ErrorPageComponent
-  //   redirectTo: '404',
-  // },
+  { path: '', component: WelcomePageComponent },
 ];
 
 @NgModule({
