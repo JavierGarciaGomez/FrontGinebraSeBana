@@ -16,7 +16,7 @@ export const validateJwt = (
     if (!token) {
       return res.status(401).json({
         ok: false,
-        msg: "No hay token en la petición",
+        message: "No hay token en la petición",
       });
     }
     // decode the payload and add it to the request
@@ -28,7 +28,7 @@ export const validateJwt = (
     console.log("ERROR", error);
     return res.status(401).json({
       ok: false,
-      msg: "Token no válido",
+      message: "Token no válido",
     });
   }
 

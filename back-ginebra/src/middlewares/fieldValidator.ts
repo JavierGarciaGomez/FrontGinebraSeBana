@@ -12,15 +12,15 @@ export const fieldValidator = (
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    let msg = "";
+    let message = "";
     errors.array().forEach((error) => {
-      msg = msg.concat(" ", error.msg);
+      message = message.concat(" ", error.msg);
     });
 
     return res.status(400).json({
       ok: false,
       errors,
-      msg,
+      message,
     });
   }
 
