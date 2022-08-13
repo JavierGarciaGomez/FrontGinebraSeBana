@@ -71,7 +71,7 @@ export const getUsers = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const users = await User.find({}, { username: 1, email: 1 });
+    const users = await User.find({}, { username: 1, email: 1, role: 1 });
     return res.status(201).json({
       ok: true,
       message: "getUsers",

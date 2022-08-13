@@ -8,8 +8,13 @@ import { RouterModule } from '@angular/router';
 import { WelcomePageComponent } from './pages/welcome-page/welcome-page.component';
 
 @NgModule({
-  declarations: [ErrorPageComponent, NavbarComponent, FooterComponent, WelcomePageComponent],
-  imports: [CommonModule, MaterialModule, RouterModule],
-  exports: [NavbarComponent, FooterComponent],
+  declarations: [
+    ErrorPageComponent,
+    NavbarComponent,
+    FooterComponent,
+    WelcomePageComponent,
+  ],
+  imports: [CommonModule, RouterModule, MaterialModule],
+  exports: [NavbarComponent, FooterComponent, MaterialModule],
 })
 export class SharedModule {}
