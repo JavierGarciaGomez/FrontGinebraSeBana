@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
@@ -12,12 +12,12 @@ import { Observable, of } from 'rxjs';
 })
 export class LoginComponent implements OnInit {
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private authService: AuthService,
     private router: Router
   ) {}
 
-  myForm: FormGroup = this.formBuilder.group({
+  myForm: UntypedFormGroup = this.formBuilder.group({
     email: [
       'javieron.garcia@gmail.com',
       [Validators.required, Validators.email],
