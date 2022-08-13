@@ -17,21 +17,21 @@ const ELEMENT_DATA: IUser[] = [
     creationDate: new Date(),
     email: 'a@mail.com',
     role: 'user',
-    username: 'javi',
+    username: 'abi',
   },
   {
     _id: Math.random().toString(),
     creationDate: new Date(),
     email: 'a@mail.com',
     role: 'user',
-    username: 'javi',
+    username: 'bebi',
   },
   {
     _id: Math.random().toString(),
     creationDate: new Date(),
     email: 'a@mail.com',
     role: 'user',
-    username: 'javi',
+    username: 'cebi',
   },
 ];
 
@@ -45,9 +45,9 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'email',
     'username',
-    // 'role',
-    // 'creationDate',
-    // 'actions',
+    'role',
+    'creationDate',
+    'actions',
   ];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   constructor(private _liveAnnouncer: LiveAnnouncer) {}
