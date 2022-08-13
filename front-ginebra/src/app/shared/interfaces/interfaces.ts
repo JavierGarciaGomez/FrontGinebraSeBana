@@ -12,10 +12,22 @@ export interface IUserResponse {
   token: string;
   user: IUser;
 }
-
-export interface IErrorResposne {
+export interface IDeleteResponse {
+  ok: true;
+  message: string;
+}
+export interface IErrorResponse {
   ok: false;
   message: string;
 }
 
-export type IAuthResponse = IUserResponse | IErrorResposne;
+export type IAuthResponse = IUserResponse | IErrorResponse;
+
+export interface IUsersResponse {
+  ok: true;
+  message: string;
+  users: IUser[];
+}
+
+export type IGetUsersResponse = IUsersResponse | IErrorResponse;
+export type IDeleteUserResponse = IDeleteResponse | IErrorResponse;

@@ -612,6 +612,21 @@ body {
     background-color: darken($secondary-color, 10%);
   }
 }
+
+/*************TYPOGRAPHY*******************/
+
+.page-heading--wrapper{
+  margin: 0 auto;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+
+
+}
+
+
 /*************************************/
 /*************UTILITIES**************/
 /*************************************/
@@ -629,6 +644,14 @@ body {
 .my-2r {
   margin-left: 2.4rem !important;
   margin-right: 2.4rem !important;
+}
+
+.u-hide-on-sm{
+  display: table-cell;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 

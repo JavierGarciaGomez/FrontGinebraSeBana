@@ -1,39 +1,13 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { IUser } from '../../../shared/interfaces/interfaces';
+import {
+  IGetUsersResponse,
+  IUser,
+} from '../../../shared/interfaces/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-
-const ELEMENT_DATA: IUser[] = [
-  {
-    _id: Math.random().toString(),
-    creationDate: new Date(),
-    email: 'a@mail.com',
-    role: 'user',
-    username: 'javi',
-  },
-  {
-    _id: Math.random().toString(),
-    creationDate: new Date(),
-    email: 'a@mail.com',
-    role: 'user',
-    username: 'abi',
-  },
-  {
-    _id: Math.random().toString(),
-    creationDate: new Date(),
-    email: 'a@mail.com',
-    role: 'user',
-    username: 'bebi',
-  },
-  {
-    _id: Math.random().toString(),
-    creationDate: new Date(),
-    email: 'a@mail.com',
-    role: 'user',
-    username: 'cebi',
-  },
-];
+import { AuthService } from '../../../auth/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users-page',
@@ -41,7 +15,6 @@ const ELEMENT_DATA: IUser[] = [
   styleUrls: ['./users-page.component.scss'],
 })
 export class UsersPageComponent implements OnInit, AfterViewInit {
-  // username, email,  role, date, actions
   displayedColumns: string[] = [
     'email',
     'username',
@@ -49,17 +22,31 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
     'creationDate',
     'actions',
   ];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
-  constructor(private _liveAnnouncer: LiveAnnouncer) {}
+  dataSource!: MatTableDataSource<IUser>;
 
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
+  constructor(
+    private _liveAnnouncer: LiveAnnouncer,
+    private authService: AuthService
+  ) {}
 
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    console.log('now', this.dataSource);
-    this.dataSource.sort = this.sort;
+  ngOnInit(): void {
+    this.fetchData();
   }
+
+  fetchData = () => {
+    this.authService.getUsers().subscribe((response: IGetUsersResponse) => {
+      if (response.ok) {
+        console.log(response.users);
+        this.dataSource = new MatTableDataSource(response.users);
+        this.dataSource.sort = this.sort;
+      } else {
+        Swal.fire('Error', response.message, 'error');
+      }
+    });
+  };
+
+  ngAfterViewInit(): void {}
 
   announceSortChange(sortState: Sort) {
     if (sortState.direction) {
@@ -67,5 +54,31 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  deleteUser(event: any, id: string) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este cambio es irrevertible',
+      icon: 'warning',
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log({ id });
+        this.authService.deleteUser(id).subscribe((response) => {
+          if (response.ok) {
+          } else {
+            Swal.fire('Error', response.message, 'error');
+          }
+        });
+        Swal.fire(
+          'Eliminado',
+          'El usuario ha sido eliminado con éxito',
+          'success'
+        );
+        console.log('BEFORE FETCHING DATA');
+        this.fetchData();
+      }
+    });
   }
 }
