@@ -8,6 +8,9 @@ import { MainRoutingModule } from './main-routing-module';
 import { MainWrapperPageComponent } from './pages/main-wrapper-page/main-wrapper-page.component';
 import { SharedModule } from '../shared/shared.module';
 import { MaterialModule } from '../material/material.module';
+import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.component';
+import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +18,15 @@ import { MaterialModule } from '../material/material.module';
     UserProfilePageComponent,
     PetPageComponent,
     MainWrapperPageComponent,
+    EditUserPageComponent,
+    ChangePasswordPageComponent,
   ],
-  imports: [CommonModule, MainRoutingModule, SharedModule, MaterialModule],
+  imports: [
+    CommonModule,
+    MainRoutingModule,
+    SharedModule,
+    MaterialModule,
+    ReactiveFormsModule,
+  ],
 })
 export class MainModule {}

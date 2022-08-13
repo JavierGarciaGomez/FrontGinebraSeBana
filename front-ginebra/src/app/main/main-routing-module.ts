@@ -4,6 +4,8 @@ import { MainPageComponent } from './pages/main-page/main-page.component';
 import { MainWrapperPageComponent } from './pages/main-wrapper-page/main-wrapper-page.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { PetPageComponent } from './pages/pet-page/pet-page.component';
+import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.component';
+import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
 
 const routes: Routes = [
   {
@@ -17,6 +19,14 @@ const routes: Routes = [
       {
         path: 'userProfile',
         component: UserProfilePageComponent,
+      },
+      {
+        path: 'changePass',
+        component: ChangePasswordPageComponent,
+      },
+      {
+        path: 'editUser',
+        component: EditUserPageComponent,
       },
       {
         path: 'petProfile',

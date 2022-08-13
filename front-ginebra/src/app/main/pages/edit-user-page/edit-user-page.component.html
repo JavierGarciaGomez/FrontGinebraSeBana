@@ -1,0 +1,58 @@
+<div class="page-heading--wrapper">
+  <h2 class="page-heading--heading mat-display-1">Editar usuario</h2>
+</div>
+
+<div class="c-container">
+  <form class="c-form --white" [formGroup]="myForm" (ngSubmit)="update()">
+    <div class="form-inputs">
+      <div class="form-group">
+        <div class="form-label">Nombre completo</div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="fullName"
+          placeholder="Ingrese su nombre de usuario"
+        />
+        <span class="form-error" *ngIf="invalidField('fullName')"
+          >Debe contar al menos con cuatro carácteres</span
+        >
+      </div>
+      <div class="form-group">
+        <div class="form-label">Nombre de usuario</div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="username"
+          placeholder="Ingrese su nombre de usuario"
+        />
+        <span class="form-error" *ngIf="invalidField('username')"
+          >Debe contar al menos con cuatro carácteres</span
+        >
+      </div>
+      <div class="form-group">
+        <div class="form-label">Email</div>
+        <input
+          class="form-input"
+          type="email"
+          formControlName="email"
+          placeholder="Ingrese su email"
+        />
+        <span class="form-error" *ngIf="invalidField('email')"
+          >Debe tener formato de email</span
+        >
+      </div>
+    </div>
+
+    <div class="main-button-wrapper">
+      <button
+        mat-button
+        class="main-button u-w-100 my-2r"
+        color="primary"
+        type="submit"
+        [disabled]="myForm.invalid"
+      >
+        Cambiar
+      </button>
+    </div>
+  </form>
+</div>

@@ -111,7 +111,6 @@ body {
 .auth-container {
   margin: 0 auto;
   padding-top: 9rem;
-
   max-width: 48rem;
 }
 
@@ -132,29 +131,6 @@ body {
   }
 }
 
-.auth-form {
-  .form-inputs {
-    margin-bottom: 2.4rem;
-  }
-  .form-group {
-    margin-bottom: 1.6rem;
-    width: 100%;
-  }
-
-  .form-label {
-  }
-  .form-input {
-    padding-left: 1.6rem;
-    height: 3.6rem;
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #d9d9d9;
-  }
-
-  .form-error{
-    color: red;
-  }
-}
 /*************MAIN*******************/
 .counters-wrapper {
   display: flex;
@@ -487,6 +463,12 @@ body {
   padding-bottom: 1rem;
 }
 
+.c-container{  
+    margin: 0 auto;      
+    max-width: 48rem;
+  
+}
+
 .main-img-wrapper {
   padding-top: 3.6rem;
   margin-bottom: 3.6rem;
@@ -579,15 +561,18 @@ body {
   display: flex;
   justify-content: center;
 
-  .main-button {
-    font-size: 2.4rem;
-    background-color: $secondary-color;
-    &:hover {
-      background-color: darken($secondary-color, 10%);
-    }
 
-    // margin: 0 auto;
+}
+
+.main-button {
+  color: white;
+  font-size: 2.4rem;
+  background-color: $secondary-color;
+  &:hover {
+    background-color: darken($secondary-color, 10%);
   }
+
+  // margin: 0 auto;
 }
 
 .main-button-wrapper {
@@ -619,12 +604,55 @@ body {
 .page-heading--wrapper{
   margin: 0 auto;
   margin-top: 5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
   color: white;
   display: flex;
   justify-content: center;
 
+  .page-heading--heading{
+    
+    // border: $identifier-border;
+    margin: 0;
+    
+  }
 
+
+}
+
+/*************FORMS*******************/
+.c-form {
+  &.--white{
+    color: white;
+    background-color: transparent;
+
+    .form-input {
+      color: white;
+    }
+
+
+  }
+  .form-inputs {
+    margin-bottom: 2.4rem;
+  }
+  .form-group {
+    margin-bottom: 1.6rem;
+    width: 100%;
+  }
+
+  .form-label {
+  }
+  .form-input {
+    background-color: transparent;
+    padding-left: 1.6rem;
+    height: 3.6rem;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #d9d9d9;
+  }
+
+  .form-error{
+    color: red;
+  }
 }
 
 

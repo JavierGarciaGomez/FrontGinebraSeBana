@@ -40,11 +40,9 @@ export const createUser = async (
     const cryptedPassword = bcrypt.hashSync(password, salt);
 
     const newUser = new User({
-      username,
-      email,
-      password: cryptedPassword,
-      role,
+      ...req.body,
     });
+
     const savedUser = await newUser.save();
 
     // Generate JWT
@@ -71,7 +69,10 @@ export const getUsers = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const users = await User.find({}, { username: 1, email: 1, role: 1 });
+    const users = await User.find(
+      {},
+      { username: 1, email: 1, role: 1, creationDate: 1, fullName: 1 }
+    );
     return res.status(201).json({
       ok: true,
       message: "getUsers",
@@ -140,6 +141,7 @@ export const updateUser = async (
     const { userReq } = req;
     const { role: userRequestRole, uid: userRequestUid } = userReq!;
     const userNewData = { ...req.body };
+    console.log({ userNewData });
 
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");

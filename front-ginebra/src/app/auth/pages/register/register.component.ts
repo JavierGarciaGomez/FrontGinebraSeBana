@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -40,15 +44,13 @@ export class RegisterComponent implements OnInit {
       Swal.fire('Error', 'Las contraseñas insertadas no coinciden', 'error');
     }
 
-    this.authService
-      .register(username, email, password)
-      .subscribe((response) => {
-        if (response.ok) {
-          this.router.navigateByUrl('/main');
-        } else {
-          Swal.fire('Error', response.message, 'error');
-        }
-      });
+    this.authService.create(username, email, password).subscribe((response) => {
+      if (response.ok) {
+        this.router.navigateByUrl('/main');
+      } else {
+        Swal.fire('Error', response.message, 'error');
+      }
+    });
   }
 
   invalidField(field: string) {

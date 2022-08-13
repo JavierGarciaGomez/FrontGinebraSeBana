@@ -11,6 +11,7 @@ import { of, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { tap, map, catchError } from 'rxjs/operators';
+import { IUpdateUserResponse } from '../../shared/interfaces/interfaces';
 
 import {
   IAuthResponse,
@@ -24,20 +25,23 @@ import {
 })
 export class AuthService {
   private baseUrl: string = `${environment.baseUrl}/auth`;
-  private _user: IUser | null | undefined;
+  private _user!: IUser | null;
   private _users: IUser[] = [];
   private routes = {
     createUser: '/createUser',
     getUsers: '/getUsers',
     login: '/login',
     renewToken: '/renewToken/',
-    updateUser: '/updateUser/:userId',
+    updateUser: '/updateUser/', //:userId
     changePass: '/changepass/:userId',
     deleteUser: '/deleteUser/', //:userId'
   };
 
   get user() {
-    return { ...this._user };
+    if (this._user) {
+      return { ...this._user };
+    }
+    return null;
   }
 
   get users() {
@@ -46,7 +50,7 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient, private router: Router) {}
 
-  register(username: string, email: string, password: string) {
+  create(username: string, email: string, password: string) {
     const url = `${this.baseUrl}${this.routes.createUser}`;
     const body = { username, email, password };
 
@@ -56,11 +60,9 @@ export class AuthService {
           this._user = {
             ...resp.user,
           };
-          console.log({ user: this._user });
           localStorage.setItem('token', resp.token);
         }
       }),
-
       map((resp: IAuthResponse) => resp),
       catchError((err) => {
         localStorage.clear();
@@ -153,7 +155,7 @@ export class AuthService {
         if (resp.ok) {
           const whatever = [3, 4, 5];
           console.log('users', this._users, whatever);
-          this._users = this._users?.filter((user) => user._id !== id);
+          this._users = this._users?.filter((user) => user.uid !== id);
         }
       }),
       map((resp: any) => {
@@ -165,5 +167,30 @@ export class AuthService {
         return of(err.error);
       })
     );
+  }
+
+  updateUser(username: string, email: string, fullName: string, id: string) {
+    const url = `${this.baseUrl}${this.routes.updateUser}${id}`;
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+    const body = { username, email, fullName };
+
+    return this.httpClient
+      .put<IUpdateUserResponse>(url, body, { headers })
+      .pipe(
+        tap((resp) => {
+          if (resp.ok) {
+            this._user = {
+              ...resp.updatedUser,
+            };
+          }
+        }),
+        map((resp: IUpdateUserResponse) => resp),
+        catchError((err) => {
+          return of(err.error);
+        })
+      );
   }
 }

@@ -1,9 +1,10 @@
 export interface IUser {
-  _id: string;
+  uid: string;
   username: string;
   email: string;
   role: string;
   creationDate: Date;
+  fullName: string;
 }
 
 export interface IUserResponse {
@@ -15,6 +16,12 @@ export interface IUserResponse {
 export interface IDeleteResponse {
   ok: true;
   message: string;
+}
+
+export interface ISuccessfulUpdateUserResponse {
+  ok: true;
+  message: string;
+  updatedUser: IUser;
 }
 export interface IErrorResponse {
   ok: false;
@@ -31,3 +38,6 @@ export interface IUsersResponse {
 
 export type IGetUsersResponse = IUsersResponse | IErrorResponse;
 export type IDeleteUserResponse = IDeleteResponse | IErrorResponse;
+export type IUpdateUserResponse =
+  | ISuccessfulUpdateUserResponse
+  | IErrorResponse;
