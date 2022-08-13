@@ -4,9 +4,7 @@
       <div class="auth-header">
         <h2 class="auth-heading">Nuevo usuario</h2>
       </div>
-      <!-- [formGroup]="miFormulario"
-  (ngSubmit)="login()" -->
-      <form class="auth-form">
+      <form class="auth-form" [formGroup]="myForm" (ngSubmit)="register()">
         <div class="form-inputs">
           <div class="form-group">
             <div class="form-label">Nombre de usuario</div>
@@ -16,6 +14,9 @@
               formControlName="username"
               placeholder="Ingrese su nombre de usuario"
             />
+            <span class="form-error" *ngIf="invalidField('username')"
+              >Debe contar al menos con cuatro carácteres</span
+            >
           </div>
           <div class="form-group">
             <div class="form-label">Email</div>
@@ -25,6 +26,9 @@
               formControlName="email"
               placeholder="Ingrese su email"
             />
+            <span class="form-error" *ngIf="invalidField('email')"
+              >Debe estar en formato de correo electrónico</span
+            >
           </div>
           <div class="form-group">
             <div class="form-label">Password</div>
@@ -35,6 +39,9 @@
               placeholder="Ingrese su contraseña"
             />
           </div>
+          <span class="form-error" *ngIf="invalidField('password')"
+            >Debe contar al menos con seis carácteres</span
+          >
           <div class="form-group">
             <div class="form-label">Confirme su contraseña</div>
             <input
@@ -43,16 +50,11 @@
               formControlName="passwordConfirmation"
               placeholder="Confirme su contraseña"
             />
-          </div>
-
-          <div class="form-group">
-            <div class="form-label">Password</div>
-            <input
-              class="form-input"
-              type="password"
-              formControlName="password"
-              placeholder="Ingrese su contraseña"
-            />
+            <span
+              class="form-error"
+              *ngIf="invalidField('passwordConfirmation')"
+              >Debe contar al menos con seis carácteres</span
+            >
           </div>
         </div>
 
@@ -61,15 +63,17 @@
             mat-raised-button
             class="main-button u-w-100 my-2r"
             color="primary"
+            type="submit"
+            [disabled]="myForm.invalid"
           >
             REGISTRO
           </button>
         </div>
 
-        <div class="flex-col-c p-t-60">
-          <span class="txt1 p-b-17"> ¿Ya tienes cuenta? </span>
+        <div class="">
+          <span class="mat-body-2"> ¿Ya tienes cuenta? </span>
 
-          <a routerLink="/auth/login" class="txt2"> Accede aquí </a>
+          <a routerLink="/auth/login" class="mat-caption"> Accede aquí </a>
         </div>
       </form>
     </div>
