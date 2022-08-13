@@ -67,17 +67,17 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
         console.log({ id });
         this.authService.deleteUser(id).subscribe((response) => {
           if (response.ok) {
+            Swal.fire(
+              'Eliminado',
+              'El usuario ha sido eliminado con éxito',
+              'success'
+            );
+            console.log('BEFORE FETCHING DATA');
+            this.fetchData();
           } else {
             Swal.fire('Error', response.message, 'error');
           }
         });
-        Swal.fire(
-          'Eliminado',
-          'El usuario ha sido eliminado con éxito',
-          'success'
-        );
-        console.log('BEFORE FETCHING DATA');
-        this.fetchData();
       }
     });
   }

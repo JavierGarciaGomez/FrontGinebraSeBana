@@ -25,7 +25,7 @@ import {
 export class AuthService {
   private baseUrl: string = `${environment.baseUrl}/auth`;
   private _user: IUser | null | undefined;
-  private _users: IUser[] | undefined;
+  private _users: IUser[] = [];
   private routes = {
     createUser: '/createUser',
     getUsers: '/getUsers',
@@ -38,6 +38,10 @@ export class AuthService {
 
   get user() {
     return { ...this._user };
+  }
+
+  get users() {
+    return [...this._users];
   }
 
   constructor(private httpClient: HttpClient, private router: Router) {}
@@ -115,6 +119,7 @@ export class AuthService {
   }
 
   getUsers() {
+    console.log('getUsers');
     const url = `${this.baseUrl}${this.routes.getUsers}`;
     const headers = new HttpHeaders().set(
       'x-token',
@@ -125,9 +130,7 @@ export class AuthService {
       tap((resp: IGetUsersResponse) => {
         console.log({ resp });
         if (resp.ok) {
-          this._users = {
-            ...resp.users,
-          };
+          this._users = [...resp.users];
         }
       }),
       map((resp: IGetUsersResponse) => resp),
@@ -146,13 +149,19 @@ export class AuthService {
 
     return this.httpClient.delete<IDeleteUserResponse>(url, { headers }).pipe(
       tap((resp) => {
-        console.log({ resp });
+        console.log('tap response', { resp });
         if (resp.ok) {
+          const whatever = [3, 4, 5];
+          console.log('users', this._users, whatever);
           this._users = this._users?.filter((user) => user._id !== id);
         }
       }),
-      map((resp: IDeleteUserResponse) => resp),
+      map((resp: any) => {
+        console.log('authService, this is my response', { resp });
+        return resp;
+      }),
       catchError((err: HttpErrorResponse) => {
+        console.log('Service deleteuser, err', err);
         return of(err.error);
       })
     );
