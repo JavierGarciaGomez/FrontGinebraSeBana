@@ -58,6 +58,8 @@ export interface IPet {
   petName: string;
   bathPeriodicity: number;
   isPublic: boolean;
+  imgUrl: string;
+  creationDate: Date;
   shampoos: string[];
   bathTypes: string[];
   linkedUsers: ILinkedUser[];

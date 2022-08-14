@@ -5,6 +5,8 @@ const petSchema = new Schema<IPet>({
   petName: { type: String, required: true, trim: true },
   bathPeriodicity: { type: Number, required: true },
   isPublic: Boolean,
+  imgUrl: String,
+  creationDate: Date,
   shampoos: [String],
   bathTypes: [String],
   linkedUsers: [

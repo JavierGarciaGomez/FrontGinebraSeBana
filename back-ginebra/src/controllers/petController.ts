@@ -99,14 +99,12 @@ export const getLinkedPetsByUser = async (
     const { userReq } = req;
     const { userId } = req.params;
 
-    const users = await Pet.find({ "linkedUsers.linkedUser": userId }).populate(
-      { path: "linkedUsers.linkedUser", select: "username email" }
-    );
+    const pets = await Pet.find({ "linkedUsers.linkedUser": userId });
 
     return res.status(201).json({
       ok: true,
       message: "getLinkPetsByUser",
-      users,
+      pets,
     });
   } catch (error) {
     return catchUndefinedError(error, res);

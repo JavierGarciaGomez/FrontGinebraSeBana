@@ -237,9 +237,14 @@ body {
 .user-profile {
   &--wrapper {
     margin: 0 auto;
-    max-width: 48rem;
+    max-width: 58rem;
     margin-top: 3.6rem;
     padding: 1.6rem;
+
+    @media (max-width: 600px) {
+      padding: 0;
+      max-width: 50rem;
+    }
   }
 
   &--heading-container {
@@ -277,6 +282,10 @@ body {
     font-size: 2.4rem;
     color: #ffffff;
     margin-bottom: 1.6rem;
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+
   }
 
   &--info-label {

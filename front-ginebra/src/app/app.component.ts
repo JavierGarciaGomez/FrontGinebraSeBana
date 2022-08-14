@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/services/auth.service';
+import { PetService } from './main/services/pet.service';
 
 @Component({
   selector: 'app-root',
@@ -7,12 +8,27 @@ import { AuthService } from './auth/services/auth.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private petService: PetService
+  ) {}
 
   title = 'Ginebra se baña';
   ngOnInit(): void {
     const user = this.authService.user;
-
-    !user && this.authService.validateJwt().subscribe();
+    !user &&
+      this.authService.validateJwt().subscribe((resp) => {
+        this.petService.getLinkedPetsByUser(this.authService.user?._id!);
+      });
   }
 }
+
+// petName
+// bathPeriodicity
+// isPublic
+// shampoos
+// bathTypes
+// linkedUsers
+// registerdBaths
+// imgUrl
+// creationDate

@@ -32,6 +32,8 @@ export class EditUserPageComponent implements OnInit {
     const user = this.authService.user;
 
     if (user?._id) this.currentData = { ...user };
+    if (!user?.imgUrl)
+      this.currentData.imgUrl = 'assets/images/unknownUser.jpg';
 
     this.myForm.setValue({
       username: user?.username || '',

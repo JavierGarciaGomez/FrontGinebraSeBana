@@ -4,12 +4,9 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
 import { environment } from 'src/environments/environment';
-
 import { of, Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
-
 import { tap, map, catchError } from 'rxjs/operators';
 import { IUpdateUserResponse } from '../../shared/interfaces/interfaces';
 

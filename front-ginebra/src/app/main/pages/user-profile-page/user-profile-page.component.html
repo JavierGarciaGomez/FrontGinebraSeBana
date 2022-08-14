@@ -52,6 +52,7 @@
       <span>{{ user.role }}</span>
     </div>
   </div>
+
   <!-- email, role, fullname, imgurl, creationDate -->
   <div class="user-profile--linked-pets">
     <div class="user-profile--info-label">
@@ -59,20 +60,20 @@
       <span>Mascotas vinculadas</span>
     </div>
     <div class="user-profile--linked-pets-list">
-      <div class="user-profile--linked-pet">
+      <div *ngFor="let pet of userLinkedPets" class="user-profile--linked-pet">
         <div class="user-profile--linked-pet-img">
-          <img src="assets/images/Ginebra.jpg" alt="" />
+          <img [src]="pet.imgUrl" alt="" />
         </div>
         <div class="user-profile-linked-pet-name">
-          <span>Ginebra</span>
+          <span>{{ pet.petName }}</span>
         </div>
         <div class="user-profile--linked-pet-actions">
-          <mat-icon>visibility</mat-icon>
-          <mat-icon>edit</mat-icon>
+          <mat-icon *ngIf="pet.viewAuthorization">visibility</mat-icon>
+          <mat-icon *ngIf="pet.editAuthorization">edit</mat-icon>
         </div>
       </div>
 
-      <div class="user-profile--linked-pet">
+      <!-- <div class="user-profile--linked-pet">
         <div class="user-profile--linked-pet-img">
           <img src="assets/images/Ginebra.jpg" alt="" />
         </div>
@@ -83,7 +84,7 @@
           <mat-icon>visibility</mat-icon>
           <mat-icon>edit</mat-icon>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="user-profile--buttons">
