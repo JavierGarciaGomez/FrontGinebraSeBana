@@ -33,7 +33,7 @@ export class AuthService {
     login: '/login',
     renewToken: '/renewToken/',
     updateUser: '/updateUser/', //:userId
-    changePass: '/changepass/:userId',
+    changePass: '/changepass/', //:userId
     deleteUser: '/deleteUser/', //:userId'
   };
 
@@ -155,7 +155,7 @@ export class AuthService {
         if (resp.ok) {
           const whatever = [3, 4, 5];
           console.log('users', this._users, whatever);
-          this._users = this._users?.filter((user) => user.uid !== id);
+          this._users = this._users?.filter((user) => user._id !== id);
         }
       }),
       map((resp: any) => {
@@ -187,6 +187,24 @@ export class AuthService {
             };
           }
         }),
+        map((resp: IUpdateUserResponse) => resp),
+        catchError((err) => {
+          return of(err.error);
+        })
+      );
+  }
+
+  changePassword(prevPassword: string, password: string, id: string) {
+    const url = `${this.baseUrl}${this.routes.changePass}${id}`;
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+    const body = { prevPassword, password };
+
+    return this.httpClient
+      .patch<IUpdateUserResponse>(url, body, { headers })
+      .pipe(
         map((resp: IUpdateUserResponse) => resp),
         catchError((err) => {
           return of(err.error);

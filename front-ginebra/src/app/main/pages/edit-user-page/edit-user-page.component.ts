@@ -28,7 +28,7 @@ export class EditUserPageComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.user;
     console.log({ user });
-    if (user?.uid) this.currentData = { ...user };
+    if (user?._id) this.currentData = { ...user };
 
     this.myForm.setValue({
       username: user?.username || '',
@@ -44,7 +44,7 @@ export class EditUserPageComponent implements OnInit {
   update() {
     const { username, email, fullName } = this.myForm.value;
     this.authService
-      .updateUser(username, email, fullName, this.authService.user?.uid!)
+      .updateUser(username, email, fullName, this.authService.user?._id!)
       .subscribe((response) => {
         if (response.ok) {
           Swal.fire(

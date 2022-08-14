@@ -43,8 +43,8 @@ authRoutes.put(routes.updateUser, validateJwt, updateUser);
 authRoutes.patch(
   routes.changePass,
   [
-    check("previousPassword", "El password anterior es necesario").notEmpty(),
-    check("newPassword", "El password anterir es necesario").notEmpty(),
+    check("prevPassword", "El password anterior es necesario").notEmpty(),
+    check("password", "El nuevo password es necesario").notEmpty(),
     fieldValidator,
   ],
   validateJwt,

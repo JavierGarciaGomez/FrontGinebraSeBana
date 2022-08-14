@@ -23,6 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["rxjs-compat", "sweetalert2"],
             "outputPath": "dist/front-ginebra",
             "index": "src/index.html",
             "main": "src/main.ts",

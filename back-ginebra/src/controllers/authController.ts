@@ -117,9 +117,9 @@ export const login = async (req: Request, res: Response) => {
 export const renewToken = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;
-    const { uid, username, email, role } = userReq!;
+    const { _id, username, email, role } = userReq!;
 
-    const token = await generateJwt(uid, username, email, role);
+    const token = await generateJwt(_id, username, email, role);
 
     return res.status(201).json({
       ok: true,
@@ -139,7 +139,7 @@ export const updateUser = async (
   try {
     const { userId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const userNewData = { ...req.body };
     console.log({ userNewData });
 
@@ -147,7 +147,7 @@ export const updateUser = async (
     if (!user) return notFoundResponse(res, "usuario");
 
     const isAuthorized =
-      userRequestRole === "admin" || userRequestUid === userId;
+      userRequestRole === "admin" || userRequest_id === userId;
 
     if (!isAuthorized) return notAuthorizedResponse(res);
 
@@ -171,17 +171,17 @@ export const changePassword = async (
   try {
     const { userId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
-    const { newPassword } = req.body;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
+    const { password } = req.body;
 
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");
 
     const salt = bcrypt.genSaltSync();
-    const cryptedPassword = bcrypt.hashSync(newPassword, salt);
+    const cryptedPassword = bcrypt.hashSync(password, salt);
 
     const isAuthorized =
-      userRequestRole === "admin" || userRequestUid === userId;
+      userRequestRole === "admin" || userRequest_id === userId;
 
     if (!isAuthorized) return notAuthorizedResponse(res);
 
@@ -209,7 +209,7 @@ export const deleteUser = async (
   try {
     const { userId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
 
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");

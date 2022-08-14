@@ -36,7 +36,6 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    console.log({ form: this.myForm });
     const { username, email, password, passwordConfirmation } =
       this.myForm.value;
 

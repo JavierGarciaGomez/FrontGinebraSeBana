@@ -19,7 +19,7 @@ export interface IUser {
 }
 export interface IGetUserAuthRequest extends Request {
   userReq?: {
-    uid: string;
+    _id: string;
     username: string;
     email: string;
     role: string;
@@ -27,11 +27,11 @@ export interface IGetUserAuthRequest extends Request {
 }
 export interface IGetUserAuthInfoRequest extends Request {
   role?: string;
-  uid?: string;
+  _id?: string;
 }
 
 export interface IUserToken {
-  uid: string;
+  _id: string;
   username: string;
   email: string;
   role: string;

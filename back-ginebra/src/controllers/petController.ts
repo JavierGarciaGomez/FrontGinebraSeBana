@@ -26,7 +26,7 @@ export const createPet = async (
 ): Promise<Response> => {
   try {
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const { petName, bathPeriodicity, isPublic } = req.body;
     const newPet = new Pet<IPet>({ ...req.body });
 
@@ -40,7 +40,7 @@ export const createPet = async (
 
     const updatedPet = await linkUserToPet(
       savedPet.id,
-      userRequestUid,
+      userRequest_id,
       true,
       true,
       true
@@ -75,7 +75,7 @@ export const getPublicPets = async (
 export const getAllPets = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
 
     const isAuthorized = userRequestRole === "admin";
     if (!isAuthorized) return notAuthorizedResponse(res);
@@ -116,14 +116,14 @@ export const getLinkedPetsByUser = async (
 export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const { petId } = req.params;
 
     const pet = await getPetByIdPopulateUser(petId);
 
     if (!pet) return notFoundResponse(res, "mascota");
 
-    const isALinkedUser = await checkIfIsALinkedUser(pet, userRequestUid);
+    const isALinkedUser = await checkIfIsALinkedUser(pet, userRequest_id);
     const isAdmin = userRequestRole === "admin";
     if (!isAdmin && !isALinkedUser) return notAuthorizedResponse(res);
 
@@ -144,14 +144,14 @@ export const updatePet = async (
   try {
     const { petId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const petNewData = { ...req.body };
 
     const pet = await Pet.findById(petId);
     if (!pet) return notFoundResponse(res, "mascota");
 
     // isAuthorized
-    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequest_id);
     const isAdmin = userRequestRole === "admin";
     if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
 
@@ -176,16 +176,16 @@ export const linkPublicPetToUser = async (
   try {
     const { petId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
 
     const pet = await Pet.findById(petId);
-    const user = await User.findById(userRequestUid);
+    const user = await User.findById(userRequest_id);
 
     if (!pet || !user) return notFoundResponse(res, "mascota o usuario");
 
     const isAlreadyALinkedUser = await checkIfIsALinkedUser(
       pet,
-      userRequestUid
+      userRequest_id
     );
 
     if (isAlreadyALinkedUser) return existentObjectResponse(res, "mascota");
@@ -195,7 +195,7 @@ export const linkPublicPetToUser = async (
 
     const updatedPet = await linkUserToPet(
       petId,
-      userRequestUid,
+      userRequest_id,
       true,
       false,
       false
@@ -218,16 +218,16 @@ export const linkUser = async (
   try {
     const { petId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const userLinkData = { ...req.body }; // {userId, view, edit}
 
     const pet = await Pet.findById(petId);
-    const user = await User.findById(userRequestUid);
+    const user = await User.findById(userRequest_id);
 
     if (!pet || !user) return notFoundResponse(res, "mascota o usuario");
 
     // isAuthorized
-    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequest_id);
     const isAdmin = userRequestRole === "admin";
     const isUserToEditCreator = checkIfUserIsCreator(
       pet,
@@ -261,14 +261,14 @@ export const deletePet = async (
   try {
     const { petId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
 
     const pet = await Pet.findById(petId);
 
     if (!pet) return notFoundResponse(res, "mascota");
 
     const isAdmin = userRequestRole === "admin";
-    const isCreator = checkIfUserIsCreator(pet, userRequestUid);
+    const isCreator = checkIfUserIsCreator(pet, userRequest_id);
     console.log({ isAdmin, isCreator });
 
     if (!isCreator && !isAdmin) return notAuthorizedResponse(res);
@@ -291,7 +291,7 @@ export const registerBath = async (
   try {
     const { petId } = req.params;
     const { userReq } = req;
-    const { role: userRequestRole, uid: userRequestUid } = userReq!;
+    const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const bathData: IPetBath = { ...req.body }; // bather, shampoos, bathTypes
 
     bathData.date = new Date();
@@ -300,7 +300,7 @@ export const registerBath = async (
     if (!pet) return notFoundResponse(res, "mascota");
 
     const isAdmin = userRequestRole === "admin";
-    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequestUid);
+    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequest_id);
 
     if (!isAdmin && !isAuthorizedToEdit) return notAuthorizedResponse(res);
 

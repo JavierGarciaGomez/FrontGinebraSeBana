@@ -63,11 +63,11 @@ export const checkIfIsALinkedUser = async (pet: IPet, userId: string) =>
 
 export const isAuthorizedToEditPet = (
   pet: IPet,
-  userRequestUid: string
+  userRequest_id: string
 ): boolean => {
   const linkedUser = pet.linkedUsers.find((linkedUser) => {
     if (
-      linkedUser.linkedUser.toString() === userRequestUid &&
+      linkedUser.linkedUser.toString() === userRequest_id &&
       linkedUser.editAuthorization
     ) {
       return linkedUser;
