@@ -5,7 +5,7 @@
     </h2>
   </div>
   <div class="user-profile--img-container">
-    <img src="assets/images/me.png" alt="" />
+    <img [src]="user.imgUrl" alt="" />
   </div>
   <div class="user-profile--info-container">
     <div class="user-profile--info-label">
@@ -13,7 +13,16 @@
       <span>Nombre de usuario</span>
     </div>
     <div class="user-profile--info-value">
-      <span>javier.garcia</span>
+      <span>{{ user.username }}</span>
+    </div>
+  </div>
+  <div class="user-profile--info-container">
+    <div class="user-profile--info-label">
+      <mat-icon>alternate_email</mat-icon>
+      <span>Correo electrónico</span>
+    </div>
+    <div class="user-profile--info-value">
+      <span>{{ user.email }}</span>
     </div>
   </div>
   <div class="user-profile--info-container">
@@ -22,9 +31,28 @@
       <span>Nombre completo</span>
     </div>
     <div class="user-profile--info-value">
-      <span>Javier García Gómez</span>
+      <span>{{ user.fullName }}</span>
     </div>
   </div>
+  <div class="user-profile--info-container">
+    <div class="user-profile--info-label">
+      <mat-icon>calendar_month</mat-icon>
+      <span>Usuario desde</span>
+    </div>
+    <div class="user-profile--info-value">
+      <span>{{ user.creationDate | date }}</span>
+    </div>
+  </div>
+  <div class="user-profile--info-container">
+    <div class="user-profile--info-label">
+      <mat-icon>remember_me</mat-icon>
+      <span>Rol</span>
+    </div>
+    <div class="user-profile--info-value">
+      <span>{{ user.role }}</span>
+    </div>
+  </div>
+  <!-- email, role, fullname, imgurl, creationDate -->
   <div class="user-profile--linked-pets">
     <div class="user-profile--info-label">
       <mat-icon>pets</mat-icon>

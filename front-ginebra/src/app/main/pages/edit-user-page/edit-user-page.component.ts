@@ -30,14 +30,14 @@ export class EditUserPageComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.user;
-    console.log({ user });
+
     if (user?._id) this.currentData = { ...user };
 
     this.myForm.setValue({
       username: user?.username || '',
       fullName: user?.fullName || '',
       email: user?.email || '',
-      imgUrl: user?.email || '',
+      imgUrl: user?.imgUrl || '',
     });
   }
 

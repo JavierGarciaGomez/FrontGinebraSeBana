@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 
 import { environment } from 'src/environments/environment';
 
-import { of, Observable } from 'rxjs';
+import { of, Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { tap, map, catchError } from 'rxjs/operators';
@@ -36,6 +36,13 @@ export class AuthService {
     changePass: '/changepass/', //:userId
     deleteUser: '/deleteUser/', //:userId'
   };
+  userChange: Subject<IUser> = new Subject<IUser>();
+
+  constructor(private httpClient: HttpClient, private router: Router) {
+    this.userChange.subscribe((user) => {
+      this._user = user;
+    });
+  }
 
   get user() {
     if (this._user) {
@@ -47,8 +54,6 @@ export class AuthService {
   get users() {
     return [...this._users];
   }
-
-  constructor(private httpClient: HttpClient, private router: Router) {}
 
   create(username: string, email: string, password: string) {
     const url = `${this.baseUrl}${this.routes.createUser}`;
@@ -77,12 +82,11 @@ export class AuthService {
 
     return this.httpClient.post<IAuthResponse>(url, body).pipe(
       tap((resp) => {
-        console.log({ resp });
         if (resp.ok) {
           this._user = {
             ...resp.user,
           };
-          console.log({ user: this._user });
+
           localStorage.setItem('token', resp.token);
         }
       }),
@@ -96,22 +100,23 @@ export class AuthService {
   }
 
   validateJwt(): Observable<boolean> {
-    console.log('validating');
     const url = `${this.baseUrl}${this.routes.renewToken}`;
     const headers = new HttpHeaders().set(
       'x-token',
       localStorage.getItem('token') || ''
     );
+
     return this.httpClient.get<IAuthResponse>(url, { headers }).pipe(
       map((resp) => {
-        console.log({ resp });
         if (resp.ok) {
           localStorage.setItem('token', resp.token);
           this._user = resp.user;
         }
         return resp.ok;
       }),
-      catchError((err) => of(false))
+      catchError((err) => {
+        return of(false);
+      })
     );
   }
 
@@ -188,9 +193,10 @@ export class AuthService {
       .pipe(
         tap((resp) => {
           if (resp.ok) {
-            this._user = {
-              ...resp.updatedUser,
-            };
+            this.userChange.next({ ...resp.updatedUser });
+            // this._user = {
+            //   ...resp.updatedUser,
+            // };
           }
         }),
         map((resp: IUpdateUserResponse) => resp),

@@ -5,6 +5,7 @@ export interface IUser {
   role: string;
   creationDate: Date;
   fullName: string;
+  imgUrl?: string;
 }
 
 export interface IUserResponse {

@@ -130,12 +130,14 @@ export const renewToken = async (req: IGetUserAuthRequest, res: Response) => {
     const { _id, username, email, role } = userReq!;
 
     const token = await generateJwt(_id, username, email, role);
+    const user = await User.findById(_id);
+    console.log({ user });
 
     return res.status(201).json({
       ok: true,
       message: "Token renewed",
       token,
-      user: userReq,
+      user,
     });
   } catch (error) {
     // uncatchedError(error, res);
@@ -182,10 +184,13 @@ export const changePassword = async (
     const { userId } = req.params;
     const { userReq } = req;
     const { role: userRequestRole, _id: userRequest_id } = userReq!;
-    const { password } = req.body;
+    const { prevPassword, password } = req.body;
 
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");
+    let isValidPrevPass = bcrypt.compareSync(prevPassword, user.password);
+    if (!isValidPrevPass)
+      return invalidParamsResponse(res, "contraseña anterior incorrecta");
 
     const salt = bcrypt.genSaltSync();
     const cryptedPassword = bcrypt.hashSync(password, salt);
