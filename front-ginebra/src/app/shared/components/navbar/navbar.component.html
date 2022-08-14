@@ -3,12 +3,25 @@
     <div class="logo"><span routerLink="/">GINEBRA SE BAÑA</span></div>
   </div>
   <div class="navbar--right">
-    <div class="menu-group" routerLink="petProfile">
-      <span>Mascota</span>
+    <div class="menu-group" routerLink="main">
+      <span>Ginebra</span>
       <div class="menu-group--img">
         <img src="assets/images/Ginebra.jpg" alt="" />
       </div>
     </div>
+    <div class="menu-group" [matMenuTriggerFor]="menu">
+      <span>Mascotas</span>
+      <div class="menu-group--img">
+        <img src="assets/images/Ginebra.jpg" alt="" />
+      </div>
+    </div>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Add New Pet</button>
+      <button mat-menu-item>Edit pet</button>
+      <button *ngFor="let pet of pets" mat-menu-item>{{ pet.petName }}</button>
+      <!-- TODO Change Pets -->
+    </mat-menu>
 
     <div class="menu-group" routerLink="userProfile">
       <span>Perfil</span>

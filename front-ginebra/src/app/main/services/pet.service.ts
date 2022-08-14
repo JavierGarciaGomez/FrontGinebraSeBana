@@ -21,11 +21,17 @@ export class PetService {
     private authService: AuthService,
     private httpClient: HttpClient
   ) {
-    this.userLinkedPetsChange.subscribe((pets) => {
-      this._userLinkedPets = pets;
+    this.userLinkedPetsChange.subscribe(
+      (userLinkedPets) => (this._userLinkedPets = userLinkedPets)
+    );
+    this.authService.userChange.subscribe((user) => {
+      console.log('PETSERVICE', { user });
+      this.getLinkedPetsByUser(user._id);
     });
   }
+  userLinkedPetsChange: Subject<IPet[]> = new Subject<IPet[]>();
   private baseUrl: string = `${environment.baseUrl}/pets`;
+  private _userLinkedPets: IPet[] = [];
   routes = {
     createPet: '/createPet',
     getPublicPets: '/getPublicPets',
@@ -38,28 +44,20 @@ export class PetService {
     deletePet: '/deletePet/:petId',
     registerBath: '/registerBath/:petId',
   };
-  private _userLinkedPets: IPet[] | undefined;
   get userLinkedPets() {
     return this._userLinkedPets;
   }
 
-  userLinkedPetsChange: Subject<IPet[]> = new Subject<IPet[]>();
-
   getLinkedPetsByUser(userId: string) {
-    console.log(userId);
     const url = `${this.baseUrl}${this.routes.getLinkedPetsByUser}${userId}`;
     const headers = new HttpHeaders().set(
       'x-token',
       localStorage.getItem('token') || ''
     );
-
-    // return
-    // todo response interface
     this.httpClient
       .get<getLinkedPetsResponse>(url, { headers })
       .pipe(
         tap(),
-        map((resp) => resp),
         catchError((err: HttpErrorResponse) => {
           return of(err.error);
         })
@@ -79,6 +77,7 @@ export class PetService {
 
             return pet;
           });
+          console.log('before pet change');
           this.userLinkedPetsChange.next(petsWithImgUrl);
         }
       });

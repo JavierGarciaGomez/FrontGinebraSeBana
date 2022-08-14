@@ -9,6 +9,7 @@ import { of, Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { tap, map, catchError } from 'rxjs/operators';
 import { IUpdateUserResponse } from '../../shared/interfaces/interfaces';
+import { PetService } from '../../main/services/pet.service';
 
 import {
   IAuthResponse,
@@ -21,8 +22,19 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
+  constructor(
+    private httpClient: HttpClient,
+    private router: Router // private petService: PetService
+  ) {
+    this.userChange.subscribe((user) => {
+      this._user = user;
+      // this.petService.getLinkedPetsByUser(user._id);
+    });
+
+    this.validateJwt().subscribe((resp) => {});
+  }
   private baseUrl: string = `${environment.baseUrl}/auth`;
-  private _user!: IUser | null;
+  private _user: IUser | null = null;
   private _users: IUser[] = [];
   private routes = {
     createUser: '/createUser',
@@ -34,12 +46,6 @@ export class AuthService {
     deleteUser: '/deleteUser/', //:userId'
   };
   userChange: Subject<IUser> = new Subject<IUser>();
-
-  constructor(private httpClient: HttpClient, private router: Router) {
-    this.userChange.subscribe((user) => {
-      this._user = user;
-    });
-  }
 
   get user() {
     if (this._user) {
@@ -59,9 +65,7 @@ export class AuthService {
     return this.httpClient.post<IAuthResponse>(url, body).pipe(
       tap((resp: IAuthResponse) => {
         if (resp.ok) {
-          this._user = {
-            ...resp.user,
-          };
+          this.userChange.next({ ...resp.user });
           localStorage.setItem('token', resp.token);
         }
       }),
@@ -80,11 +84,8 @@ export class AuthService {
     return this.httpClient.post<IAuthResponse>(url, body).pipe(
       tap((resp) => {
         if (resp.ok) {
-          this._user = {
-            ...resp.user,
-          };
-
           localStorage.setItem('token', resp.token);
+          this.userChange.next({ ...resp.user });
         }
       }),
 
@@ -107,7 +108,7 @@ export class AuthService {
       map((resp) => {
         if (resp.ok) {
           localStorage.setItem('token', resp.token);
-          this._user = resp.user;
+          this.userChange.next({ ...resp.user });
         }
         return resp.ok;
       }),
@@ -119,11 +120,11 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
+
     this.router.navigateByUrl('/');
   }
 
   getUsers() {
-    console.log('getUsers');
     const url = `${this.baseUrl}${this.routes.getUsers}`;
     const headers = new HttpHeaders().set(
       'x-token',
@@ -132,7 +133,6 @@ export class AuthService {
 
     return this.httpClient.get<IGetUsersResponse>(url, { headers }).pipe(
       tap((resp: IGetUsersResponse) => {
-        console.log({ resp });
         if (resp.ok) {
           this._users = [...resp.users];
         }
@@ -153,19 +153,16 @@ export class AuthService {
 
     return this.httpClient.delete<IDeleteUserResponse>(url, { headers }).pipe(
       tap((resp) => {
-        console.log('tap response', { resp });
         if (resp.ok) {
           const whatever = [3, 4, 5];
-          console.log('users', this._users, whatever);
+
           this._users = this._users?.filter((user) => user._id !== id);
         }
       }),
       map((resp: any) => {
-        console.log('authService, this is my response', { resp });
         return resp;
       }),
       catchError((err: HttpErrorResponse) => {
-        console.log('Service deleteuser, err', err);
         return of(err.error);
       })
     );
@@ -191,9 +188,6 @@ export class AuthService {
         tap((resp) => {
           if (resp.ok) {
             this.userChange.next({ ...resp.updatedUser });
-            // this._user = {
-            //   ...resp.updatedUser,
-            // };
           }
         }),
         map((resp: IUpdateUserResponse) => resp),

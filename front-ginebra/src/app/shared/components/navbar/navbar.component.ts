@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/services/auth.service';
-import { IUser } from '../../interfaces/interfaces';
+import { IUser, IPet } from '../../interfaces/interfaces';
+import { PetService } from '../../../main/services/pet.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,13 +9,18 @@ import { IUser } from '../../interfaces/interfaces';
 })
 export class NavbarComponent implements OnInit {
   user: IUser | null;
+  pets: IPet[] = [];
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private petService: PetService
+  ) {
     this.user = authService.user;
     this.authService.userChange.subscribe((user) => {
       this.imgUrl = user.imgUrl || 'assets/images/unknownUser.jpg';
     });
-    console.log('CONSTRUCTOR NAVBAR ', this.user);
+    if (this.user) {
+    }
   }
 
   imgUrl = 'assets/images/unknownUser.jpg';

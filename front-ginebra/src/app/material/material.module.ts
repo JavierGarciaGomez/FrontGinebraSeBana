@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [],
@@ -14,6 +15,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatButtonModule,
     MatTableModule,
     MatSortModule,
+    MatMenuModule,
   ],
 })
 export class MaterialModule {}

@@ -17,7 +17,7 @@ export class UserProfilePageComponent implements OnInit {
     private petService: PetService
   ) {
     this.user = authService.user!;
-    this.petService.getLinkedPetsByUser(this.authService.user?._id!);
+    // this.petService.getLinkedPetsByUser(this.authService.user?._id!);
 
     if (!this.user.imgUrl) this.user.imgUrl = 'assets/images/unknownUser.jpg';
     this.userLinkedPets = petService.userLinkedPets || [];

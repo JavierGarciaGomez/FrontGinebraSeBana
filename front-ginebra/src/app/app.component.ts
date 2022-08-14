@@ -9,18 +9,13 @@ import { PetService } from './main/services/pet.service';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private authService: AuthService,
-    private petService: PetService
-  ) {}
+    private authService: AuthService // private petService: PetService
+  ) {
+    console.log('APPCOMPONENT - constructor');
+  }
 
   title = 'Ginebra se baña';
-  ngOnInit(): void {
-    const user = this.authService.user;
-    !user &&
-      this.authService.validateJwt().subscribe((resp) => {
-        this.petService.getLinkedPetsByUser(this.authService.user?._id!);
-      });
-  }
+  ngOnInit(): void {}
 }
 
 // petName
