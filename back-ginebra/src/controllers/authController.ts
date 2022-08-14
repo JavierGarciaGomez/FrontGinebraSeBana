@@ -42,6 +42,8 @@ export const createUser = async (
     const newUser = new User({
       ...req.body,
     });
+    newUser.password = cryptedPassword;
+    newUser.creationDate = new Date();
 
     const savedUser = await newUser.save();
 
@@ -68,10 +70,18 @@ export const getUsers = async (
   req: IGetUserAuthRequest,
   res: Response
 ): Promise<Response> => {
+  // TODO: 2 answers, one for public and other for the others
   try {
     const users = await User.find(
       {},
-      { username: 1, email: 1, role: 1, creationDate: 1, fullName: 1 }
+      {
+        username: 1,
+        email: 1,
+        role: 1,
+        creationDate: 1,
+        fullName: 1,
+        imgUrl: 1,
+      }
     );
     return res.status(201).json({
       ok: true,

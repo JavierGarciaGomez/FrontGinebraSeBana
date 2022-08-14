@@ -29,6 +29,10 @@ a {
   cursor: pointer;
 }
 
+img{
+  width: 100%;
+}
+
 html,
 body {
   height: 100%;
@@ -329,6 +333,29 @@ body {
   &--buttons {
     display: flex;
     justify-content: space-evenly;
+  }
+}
+
+/*************EDIT USER*******************/
+.update-img-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+
+  .c-img--container{
+    flex: 1;
+    
+  }
+  label{
+    flex: 1;
+    
+    mat-icon{      
+      cursor: pointer;
+    }
+        input{
+      display: none;
+    }
   }
 }
 
@@ -655,6 +682,21 @@ body {
   }
 }
 
+/************IMAGES****************/
+
+.c-img--container{
+  max-width: 15rem;
+  margin: 0 auto;
+  display: flex;
+  border-radius: 2%;
+  overflow: hidden;
+  box-shadow: 0px 5px 20px 5px #050505;
+  padding: 0;
+
+  img{
+    object-fit: cover;
+  }
+}
 
 /*************************************/
 /*************UTILITIES**************/
@@ -681,6 +723,11 @@ body {
   @media (max-width: 600px) {
     display: none;
   }
+}
+
+.u-hide{
+  width: 0;
+  display: none;
 }
 
 

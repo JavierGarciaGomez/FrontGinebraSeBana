@@ -169,13 +169,19 @@ export class AuthService {
     );
   }
 
-  updateUser(username: string, email: string, fullName: string, id: string) {
+  updateUser(
+    username: string,
+    email: string,
+    fullName: string,
+    imgUrl: string,
+    id: string
+  ) {
     const url = `${this.baseUrl}${this.routes.updateUser}${id}`;
     const headers = new HttpHeaders().set(
       'x-token',
       localStorage.getItem('token') || ''
     );
-    const body = { username, email, fullName };
+    const body = { username, email, fullName, imgUrl };
 
     return this.httpClient
       .put<IUpdateUserResponse>(url, body, { headers })

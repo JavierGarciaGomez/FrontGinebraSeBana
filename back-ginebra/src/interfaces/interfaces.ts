@@ -15,6 +15,7 @@ export interface IUser {
   fullName?: string;
   linkedPets?: ILinkedPet[];
   creationDate: Date;
+  imgUrl: string;
   //   comparePassword: (password: string) => Promise<Boolean>;
 }
 export interface IGetUserAuthRequest extends Request {

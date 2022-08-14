@@ -20,10 +20,9 @@ const userSchema = new Schema<IUser>({
     type: String,
     default: "user",
   },
-  creationDate: {
-    type: Date,
-    default: new Date(),
-  },
+  creationDate: Date,
+  imgUrl: String,
+
   // linkedPets: [{ type: Schema.Types.ObjectId, ref: "Pet" }],
 
   linkedPets: [
