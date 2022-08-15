@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PetService } from '../../services/pet.service';
 
 export interface PeriodicElement {
   name: string;
@@ -9,11 +10,16 @@ export interface PeriodicElement {
 
 @Component({
   selector: 'app-main-page',
-  templateUrl: './main-page.component.html',
+  templateUrl: './selectedPet-page.component.html',
   styles: [],
 })
-export class MainPageComponent implements OnInit {
-  constructor() {}
+export class SelectedPetPageComponent implements OnInit {
+  constructor(private petService: PetService) {}
+
+  get selectedPet() {
+    return this.petService.selectedPet;
+  }
+
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
 
   showers = [

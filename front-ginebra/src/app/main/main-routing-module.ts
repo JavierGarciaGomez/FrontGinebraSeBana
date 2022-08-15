@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MainPageComponent } from './pages/main-page/main-page.component';
+import { SelectedPetPageComponent } from './pages/selectedPet-page/selectedPet-page.component';
 import { MainWrapperPageComponent } from './pages/main-wrapper-page/main-wrapper-page.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { PetPageComponent } from './pages/pet-page/pet-page.component';
@@ -13,8 +13,8 @@ const routes: Routes = [
     component: MainWrapperPageComponent,
     children: [
       {
-        path: 'main',
-        component: MainPageComponent,
+        path: 'selectedPet',
+        component: SelectedPetPageComponent,
       },
       {
         path: 'userProfile',
@@ -34,7 +34,7 @@ const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: 'main',
+        redirectTo: 'selectedPet',
       },
     ],
   },
