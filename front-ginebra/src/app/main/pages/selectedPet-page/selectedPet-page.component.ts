@@ -7,8 +7,14 @@ import {
 } from '@angular/core';
 import { PetService } from '../../services/pet.service';
 import * as dayjs from 'dayjs';
-import { ICounterBathInfo } from 'src/app/shared/interfaces/interfaces';
-import { IPet } from '../../../shared/interfaces/interfaces';
+import {
+  ICounterBathInfo,
+  IPetBath,
+} from 'src/app/shared/interfaces/interfaces';
+import { IPet, IDictionary } from '../../../shared/interfaces/interfaces';
+
+import Swal from 'sweetalert2';
+
 dayjs().format();
 
 export interface PeriodicElement {
@@ -110,5 +116,51 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
       nextBathDate,
       daysLeft,
     };
+  }
+
+  async registerBath() {
+    let bathersOptions: IDictionary = {};
+    let shampoosOptions: IDictionary = {};
+    let bathTypesOptions: IDictionary = {};
+
+    this.selectedPet.bathers.forEach((element) => {
+      bathersOptions[element] = element;
+    });
+    this.selectedPet.shampoos.forEach((element) => {
+      shampoosOptions[element] = element;
+    });
+    this.selectedPet.bathTypes.forEach((element) => {
+      bathTypesOptions[element] = element;
+    });
+
+    const batherSelect: any = await Swal.fire({
+      title: '¿Quién bañó a la mascota?',
+      input: 'radio',
+      inputOptions: bathersOptions,
+      showCancelButton: true,
+    });
+
+    const bathTypeSelect: any = await Swal.fire({
+      title: '¿Qué tipo de baño se realizó?',
+      input: 'radio',
+      inputOptions: bathTypesOptions,
+      showCancelButton: true,
+    });
+
+    const shampooSelect: any = await Swal.fire({
+      title: '¿Quién bañó a la mascota?',
+      input: 'radio',
+      inputOptions: shampoosOptions,
+      showCancelButton: true,
+    });
+
+    const bath: IPetBath = {
+      date: new Date(),
+      bather: batherSelect.value,
+      shampoo: shampooSelect.value,
+      bathType: bathTypeSelect.value,
+    };
+
+    this.petService.registerBath(bath);
   }
 }

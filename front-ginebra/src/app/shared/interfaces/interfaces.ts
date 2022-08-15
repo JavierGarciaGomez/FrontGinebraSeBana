@@ -56,9 +56,9 @@ export interface ILinkedUser {
 
 export interface IPetBath {
   date: Date;
-  bather?: { username: string; imgUrl: string };
-  shampoos?: string[];
-  bathType: String;
+  bather?: string;
+  shampoo?: string;
+  bathType?: String;
 }
 export interface IPet {
   _id: string;
@@ -107,3 +107,5 @@ export interface ISinglePetSuccessResponse {
 }
 
 export type ISinglePetResponse = ISinglePetSuccessResponse | IErrorResponse;
+
+export type IDictionary = { [index: string]: string };

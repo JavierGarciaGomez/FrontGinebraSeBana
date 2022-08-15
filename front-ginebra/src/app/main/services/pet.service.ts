@@ -8,7 +8,10 @@ import {
 } from '@angular/common/http';
 import { tap, map, catchError } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
-import { ISinglePetResponse } from '../../shared/interfaces/interfaces';
+import {
+  IPetBath,
+  ISinglePetResponse,
+} from '../../shared/interfaces/interfaces';
 import {
   IgetLinkedPetsResponse,
   IgetPetByIdResponse,
@@ -151,6 +154,26 @@ export class PetService {
           pet.creator = linkedUser?.creator || false;
 
           this.selectedPetChange.next(pet);
+        }
+      });
+  }
+
+  registerBath(petBath: IPetBath) {
+    const url = `${this.baseUrl}${this.routes.registerBath}${this.selectedPet._id}`;
+    const body = { ...petBath };
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+
+    return this.httpClient
+      .post<ISinglePetResponse>(url, body, { headers })
+      .subscribe((resp) => {
+        if (resp.ok) {
+          this.selectedPetChange.next(resp.pet);
+          this.router.navigateByUrl('main/selectedPet');
+        } else {
+          Swal.fire('Error', resp.message, 'error');
         }
       });
   }

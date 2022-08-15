@@ -311,7 +311,7 @@ export const registerBath = async (
     return res.status(201).json({
       ok: true,
       message: "Bath registered correctly",
-      updatedPet,
+      pet: updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);
