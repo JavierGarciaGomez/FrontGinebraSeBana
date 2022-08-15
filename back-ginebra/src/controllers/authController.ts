@@ -93,6 +93,25 @@ export const getUsers = async (
   }
 };
 
+export const getUserByUsername = async (
+  req: IGetUserAuthRequest,
+  res: Response
+): Promise<Response> => {
+  // TODO: 2 answers, one for public and other for the others
+  try {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) return notFoundResponse(res, "usuario");
+    return res.status(201).json({
+      ok: true,
+      message: "getUsers",
+      user,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;

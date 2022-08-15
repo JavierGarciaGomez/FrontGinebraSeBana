@@ -248,7 +248,7 @@ export const linkUser = async (
     return res.status(201).json({
       ok: true,
       message: "Pet updated succesfully",
-      updatedPet,
+      pet: updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);

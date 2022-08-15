@@ -181,6 +181,25 @@ export class PetService {
       });
   }
 
+  linkUser(newLinkUser: {}) {
+    const url = `${this.baseUrl}${this.routes.linkUser}${this.selectedPet._id}`;
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+    const body = { ...newLinkUser };
+
+    return this.httpClient
+      .put<ISinglePetResponse>(url, body, { headers })
+      .subscribe((resp) => {
+        if (resp.ok) {
+          this.selectedPetChange.next(resp.pet);
+        } else {
+          Swal.fire('Error', resp.message, 'error');
+        }
+      });
+  }
+
   deletePet(petId: string = '') {
     petId = petId !== '' ? petId : this.selectedPet._id;
     const url = `${this.baseUrl}${this.routes.deletePet}${petId}`;

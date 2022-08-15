@@ -40,6 +40,7 @@ export class AuthService {
   private routes = {
     createUser: '/createUser',
     getUsers: '/getUsers',
+    getUserByUsername: '/getUserByUsername/', //:username
     login: '/login',
     renewToken: '/renewToken/',
     updateUser: '/updateUser/', //:userId
@@ -143,6 +144,18 @@ export class AuthService {
         return of(err.error);
       })
     );
+  }
+
+  async getUserByUsername(username: string) {
+    const url = `${this.baseUrl}${this.routes.getUserByUsername}${username}`;
+    const token = localStorage.getItem('token') || '';
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'x-token': token,
+      },
+    });
+    return response;
   }
 
   deleteUser(id: string) {

@@ -16,6 +16,13 @@ export interface IUserResponse {
   token: string;
   user: IUser;
 }
+
+export interface ISingleUserSuccessResponse {
+  ok: true;
+  message: string;
+  user: IUser;
+}
+
 export interface IDeleteResponse {
   ok: true;
   message: string;
@@ -32,6 +39,9 @@ export interface IErrorResponse {
 }
 
 export type IAuthResponse = IUserResponse | IErrorResponse;
+export type IGetSingleUserResponse =
+  | ISingleUserSuccessResponse
+  | IErrorResponse;
 
 export interface IUsersResponse {
   ok: true;

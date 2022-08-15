@@ -47,7 +47,10 @@ export const linkUserToPet = async (
     petId,
     { linkedUsers: newLinkedUsers },
     { new: true }
-  );
+  ).populate({
+    path: "linkedUsers.linkedUser",
+    select: "username email imgUrl",
+  });
 };
 
 export const getPetByIdPopulateUser = async (petId: string) =>

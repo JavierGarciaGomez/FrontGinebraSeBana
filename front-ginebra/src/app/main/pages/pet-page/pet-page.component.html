@@ -119,6 +119,7 @@
     </div>
     <div class="pet-profile--buttons">
       <button
+        (click)="linkNewUser()"
         mat-raised-button
         class="main-button"
         *ngIf="selectedPet.editAuthorization"

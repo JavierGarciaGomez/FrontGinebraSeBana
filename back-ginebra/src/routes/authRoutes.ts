@@ -5,6 +5,7 @@ import {
   updateUser,
   getUsers,
   renewToken,
+  getUserByUsername,
 } from "../controllers/authController";
 import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
@@ -15,6 +16,7 @@ export const authRoutes = Router();
 const routes = {
   createUser: "/createUser",
   getUsers: "/getUsers",
+  getUserByUsername: "/getUserByUsername/:username",
   login: "/login",
   renewToken: "/renewToken/",
   updateUser: "/updateUser/:userId",
@@ -37,6 +39,7 @@ authRoutes.post(
   createUser
 );
 authRoutes.get(routes.getUsers, getUsers);
+authRoutes.get(routes.getUserByUsername, validateJwt, getUserByUsername);
 authRoutes.post(routes.login, login);
 authRoutes.get(routes.renewToken, validateJwt, renewToken);
 authRoutes.put(routes.updateUser, validateJwt, updateUser);
