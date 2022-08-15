@@ -11,7 +11,7 @@
       </h2>
     </div>
     <div class="pet-profile--img-container">
-      <img src="assets/images/Ginebra.jpg" alt="" />
+      <img [src]="selectedPet.imgUrl" alt="" />
     </div>
 
     <div class="pet-profile--info-container">
@@ -107,7 +107,12 @@
             <mat-icon *ngIf="element.editAuthorization">edit</mat-icon>
             <mat-icon *ngIf="element.creator">personAdd</mat-icon>
             <button *ngIf="selectedPet.editAuthorization">Editar</button>
-            <button *ngIf="selectedPet.creator">Remover</button>
+            <button
+              *ngIf="selectedPet.creator"
+              (click)="removeLinkedUser(element.linkedUser._id)"
+            >
+              Remover
+            </button>
           </div>
         </div>
       </div>
@@ -127,7 +132,12 @@
       >
         Editar mascota
       </button>
-      <button mat-raised-button class="main-button" *ngIf="selectedPet.creator">
+      <button
+        mat-raised-button
+        class="main-button"
+        *ngIf="selectedPet.creator"
+        (click)="deletePet()"
+      >
         Eliminar mascota
       </button>
     </div>

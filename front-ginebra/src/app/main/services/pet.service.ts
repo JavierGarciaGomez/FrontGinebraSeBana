@@ -46,6 +46,7 @@ export class PetService {
   private baseUrl: string = `${environment.baseUrl}/pets`;
   private _userLinkedPets: IPet[] = [];
   private _selectedPet!: IPet;
+  ginebraId = '62f4bea5ad3a2957faa248ed';
 
   routes = {
     createPet: '/createPet',
@@ -174,6 +175,32 @@ export class PetService {
       .subscribe((resp) => {
         if (resp.ok) {
           this.selectedPetChange.next(resp.pet);
+        } else {
+          Swal.fire('Error', resp.message, 'error');
+        }
+      });
+  }
+
+  deletePet(petId: string = '') {
+    petId = petId !== '' ? petId : this.selectedPet._id;
+    const url = `${this.baseUrl}${this.routes.deletePet}${petId}`;
+
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+
+    return this.httpClient
+      .delete<ISinglePetResponse>(url, { headers })
+      .subscribe((resp) => {
+        if (resp.ok) {
+          this.getLinkedPetsByUser(this.authService.user?._id!);
+          let newSelectedPet = null;
+          if (this._userLinkedPets.length > 0) {
+            this.selectedPetChange.next(this._userLinkedPets[0]);
+          } else {
+            this.getPetById(this.ginebraId);
+          }
         } else {
           Swal.fire('Error', resp.message, 'error');
         }
