@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [],
@@ -16,6 +18,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatTableModule,
     MatSortModule,
     MatMenuModule,
+    MatGridListModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}

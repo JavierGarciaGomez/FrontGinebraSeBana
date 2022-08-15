@@ -1,5 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { PetService } from '../../services/pet.service';
+import * as dayjs from 'dayjs';
+import { ICounterBathInfo } from 'src/app/shared/interfaces/interfaces';
+dayjs().format();
 
 export interface PeriodicElement {
   name: string;
@@ -13,15 +22,43 @@ export interface PeriodicElement {
   templateUrl: './selectedPet-page.component.html',
   styles: [],
 })
-export class SelectedPetPageComponent implements OnInit {
-  constructor(private petService: PetService) {}
+export class SelectedPetPageComponent implements OnInit, AfterViewInit {
+  constructor(private petService: PetService) {
+    this.petService.selectedPetChange.subscribe((selectedPet) => {
+      const hasRegisteredBaths = selectedPet.registeredBaths.length > 0;
+      let lastBathDate = null;
+      let daysPassed = null;
+      let nextBathDate: any = dayjs().add(
+        this.selectedPet.bathPeriodicity,
+        'day'
+      );
+      let daysLeft = nextBathDate.diff(dayjs(), 'day');
+      if (hasRegisteredBaths) {
+        const latestBath = selectedPet.registeredBaths.reduce(
+          (prevValue, registerdBath) =>
+            prevValue.date > registerdBath.date ? prevValue : registerdBath
+        );
+        lastBathDate = dayjs(latestBath.date);
+        daysPassed = dayjs().diff(lastBathDate, 'day');
+        nextBathDate = dayjs(lastBathDate).add(
+          this.selectedPet.bathPeriodicity,
+          'day'
+        );
+        daysLeft = nextBathDate.diff(dayjs(), 'day');
+        lastBathDate = lastBathDate.toDate();
+      }
 
-  get selectedPet() {
-    return this.petService.selectedPet;
+      this._counterBathInfo = {
+        hasRegisteredBaths,
+        lastBathDate,
+        daysPassed,
+        nextBathDate,
+        daysLeft,
+      };
+    });
   }
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-
   showers = [
     {
       date: new Date(),
@@ -54,6 +91,17 @@ export class SelectedPetPageComponent implements OnInit {
       shampoos: ['Chan, Shamp'],
     },
   ];
+  _counterBathInfo: ICounterBathInfo | null = null;
+  get selectedPet() {
+    return this.petService.selectedPet;
+  }
+  get counterBathInfo() {
+    return this._counterBathInfo;
+  }
 
   ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    // this.isLoading = false;
+  }
 }

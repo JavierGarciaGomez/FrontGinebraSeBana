@@ -26,9 +26,10 @@ export class PetService {
     this.userLinkedPetsChange.subscribe(
       (userLinkedPets) => (this._userLinkedPets = userLinkedPets)
     );
-    this.selectedPetChange.subscribe((pet) => (this._selectedPet = pet));
+    this.selectedPetChange.subscribe((pet) => {
+      this._selectedPet = pet;
+    });
     this.authService.userChange.subscribe((user) => {
-      console.log('PETSERVICE', { user });
       this.getLinkedPetsByUser(user._id);
       this.getPet();
     });
@@ -87,7 +88,7 @@ export class PetService {
 
             return pet;
           });
-          console.log('before pet change');
+
           this.userLinkedPetsChange.next(petsWithImgUrl);
         }
       });
@@ -121,7 +122,6 @@ export class PetService {
           pet.editAuthorization = linkedUser?.editAuthorization || false;
           pet.creator = linkedUser?.creator || false;
 
-          console.log('before pet change');
           this.selectedPetChange.next(pet);
         }
       });

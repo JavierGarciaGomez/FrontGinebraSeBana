@@ -1,51 +1,59 @@
-<mat-toolbar class="navbar">
-  <div class="left">
-    <div class="logo"><span routerLink="/">GINEBRA SE BAÑA</span></div>
-  </div>
-  <div class="navbar--right">
-    <!-- TODO SelectedPet -->
-    <div class="menu-group" routerLink="main">
-      <span>{{ selectedPet.petName }}</span>
-      <div class="menu-group--img">
-        <img src="assets/images/Ginebra.jpg" alt="" />
-      </div>
-    </div>
-    <!-- TODO IF NOT USER SHOW PUBLIC -->
-    <div class="menu-group" [matMenuTriggerFor]="menu">
-      <span>Mascotas</span>
-      <div class="menu-group--img">
-        <img src="assets/images/Ginebra.jpg" alt="" />
-      </div>
-    </div>
+<mat-grid-list cols="1" *ngIf="!user || !pets || !selectedPet; else divMain">
+  <mat-grid-tile>
+    <mat-spinner></mat-spinner>
+  </mat-grid-tile>
+</mat-grid-list>
 
-    <mat-menu #menu="matMenu">
-      <button *ngIf="user" mat-menu-item>Add New Pet</button>
-      <button *ngIf="user" mat-menu-item>Edit pet</button>
-      <button *ngFor="let pet of pets" mat-menu-item (click)="selectPet(pet)">
-        {{ pet.petName }}
+<ng-template #divMain>
+  <mat-toolbar class="navbar">
+    <div class="left">
+      <div class="logo"><span routerLink="/">GINEBRA SE BAÑA</span></div>
+    </div>
+    <div class="navbar--right">
+      <!-- TODO SelectedPet -->
+      <div class="menu-group" routerLink="main">
+        <span>{{ selectedPet.petName }}</span>
+        <div class="menu-group--img">
+          <img src="assets/images/Ginebra.jpg" alt="" />
+        </div>
+      </div>
+      <!-- TODO IF NOT USER SHOW PUBLIC -->
+      <div class="menu-group" [matMenuTriggerFor]="menu">
+        <span>Mascotas</span>
+        <div class="menu-group--img">
+          <img src="assets/images/Ginebra.jpg" alt="" />
+        </div>
+      </div>
+
+      <mat-menu #menu="matMenu">
+        <button *ngIf="user" mat-menu-item>Add New Pet</button>
+        <button *ngIf="user" mat-menu-item>Edit pet</button>
+        <button *ngFor="let pet of pets" mat-menu-item (click)="selectPet(pet)">
+          {{ pet.petName }}
+        </button>
+        <!-- TODO Change Pets -->
+      </mat-menu>
+
+      <div *ngIf="user" class="menu-group" routerLink="userProfile">
+        <span>Perfil</span>
+        <div class="menu-group--img">
+          <img [src]="imgUrl" alt="" />
+        </div>
+      </div>
+      <div *ngIf="!user" class="menu-group" routerLink="/auth/login">
+        <span>Login</span>
+        <div class="menu-group--img">
+          <img [src]="imgUrl" alt="" />
+        </div>
+      </div>
+
+      <button *ngIf="user" mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
       </button>
-      <!-- TODO Change Pets -->
-    </mat-menu>
-
-    <div *ngIf="user" class="menu-group" routerLink="userProfile">
-      <span>Perfil</span>
-      <div class="menu-group--img">
-        <img [src]="imgUrl" alt="" />
-      </div>
     </div>
-    <div *ngIf="!user" class="menu-group" routerLink="/auth/login">
-      <span>Login</span>
-      <div class="menu-group--img">
-        <img [src]="imgUrl" alt="" />
-      </div>
-    </div>
+  </mat-toolbar>
+  <!-- <pre style="color: white">{{ user | json }}</pre> -->
+  <!-- <pre style="color: white">{{ pets | json }}</pre> -->
 
-    <button *ngIf="user" mat-icon-button (click)="logout()">
-      <mat-icon>logout</mat-icon>
-    </button>
-  </div>
-</mat-toolbar>
-<!-- <pre style="color: white">{{ user | json }}</pre> -->
-<!-- <pre style="color: white">{{ pets | json }}</pre> -->
-
-<!-- <pre style="color: white">{{ selectedPet | json }}</pre> -->
+  <!-- <pre style="color: white">{{ selectedPet | json }}</pre> -->
+</ng-template>

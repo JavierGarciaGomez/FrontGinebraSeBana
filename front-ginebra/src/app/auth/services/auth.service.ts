@@ -26,7 +26,6 @@ export class AuthService {
     private httpClient: HttpClient,
     private router: Router // private petService: PetService
   ) {
-    console.log('AUTH SERVICE. constructor');
     this.userChange.subscribe((user) => {
       this._user = user;
 

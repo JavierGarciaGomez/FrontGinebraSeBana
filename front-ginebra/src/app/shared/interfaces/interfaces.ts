@@ -1,3 +1,5 @@
+import * as dayjs from 'dayjs';
+dayjs().format();
 export interface IUser {
   _id: string;
   username: string;
@@ -88,3 +90,11 @@ export interface IPetResponse {
 
 export type IgetLinkedPetsResponse = ILinkedPetsResponse | IErrorResponse;
 export type IgetPetByIdResponse = IPetResponse | IErrorResponse;
+
+export interface ICounterBathInfo {
+  hasRegisteredBaths: boolean;
+  lastBathDate: null | Date;
+  daysPassed: null | number;
+  nextBathDate: null | Date;
+  daysLeft: number;
+}
