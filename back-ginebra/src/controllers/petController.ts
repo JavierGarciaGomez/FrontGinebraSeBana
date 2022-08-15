@@ -99,7 +99,10 @@ export const getLinkedPetsByUser = async (
     const { userReq } = req;
     const { userId } = req.params;
 
-    const pets = await Pet.find({ "linkedUsers.linkedUser": userId });
+    const pets = await Pet.find({ "linkedUsers.linkedUser": userId }).populate({
+      path: "linkedUsers.linkedUser",
+      select: "username email imgUrl",
+    });
 
     return res.status(201).json({
       ok: true,
@@ -160,7 +163,7 @@ export const updatePet = async (
     return res.status(201).json({
       ok: true,
       message: "Pet updated succesfully",
-      updatedPet,
+      pet: updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);

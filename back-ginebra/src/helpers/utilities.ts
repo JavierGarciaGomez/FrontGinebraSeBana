@@ -53,7 +53,7 @@ export const linkUserToPet = async (
 export const getPetByIdPopulateUser = async (petId: string) =>
   await Pet.findById(petId).populate({
     path: "linkedUsers.linkedUser",
-    select: "username email",
+    select: "username email imgUrl",
   });
 
 export const checkIfIsALinkedUser = async (pet: IPet, userId: string) =>

@@ -1,17 +1,12 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { PetService } from '../../services/pet.service';
 import * as dayjs from 'dayjs';
 import {
   ICounterBathInfo,
+  IDictionary,
+  IPet,
   IPetBath,
 } from 'src/app/shared/interfaces/interfaces';
-import { IPet, IDictionary } from '../../../shared/interfaces/interfaces';
 
 import Swal from 'sweetalert2';
 
@@ -40,38 +35,7 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
   }
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  showers = [
-    {
-      date: new Date(),
-      type: 'Peluquería',
-      doneBy: 'Javier García',
-      shampoos: ['Chan, Shamp'],
-    },
-    {
-      date: new Date(),
-      type: 'Peluquería',
-      doneBy: 'Javier García',
-      shampoos: ['Chan, Shamp'],
-    },
-    {
-      date: new Date(),
-      type: 'Peluquería',
-      doneBy: 'Javier García',
-      shampoos: ['Chan, Shamp'],
-    },
-    {
-      date: new Date(),
-      type: 'Peluquería',
-      doneBy: 'Javier García',
-      shampoos: ['Chan, Shamp'],
-    },
-    {
-      date: new Date(),
-      type: 'Peluquería',
-      doneBy: 'Javier García',
-      shampoos: ['Chan, Shamp'],
-    },
-  ];
+
   _counterBathInfo: ICounterBathInfo | null = null;
   get selectedPet() {
     return this.petService.selectedPet;
@@ -162,5 +126,14 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
     };
 
     this.petService.registerBath(bath);
+  }
+
+  deleteBath(bathId: String) {
+    const baths = this.selectedPet.registeredBaths.filter(
+      (bath) => bath._id !== bathId
+    );
+    const selectedPet = { ...this.selectedPet };
+    selectedPet.registeredBaths = [...baths];
+    this.petService.updatePet(selectedPet);
   }
 }

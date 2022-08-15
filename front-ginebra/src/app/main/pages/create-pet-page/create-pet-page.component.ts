@@ -22,12 +22,12 @@ export class CreatePetPageComponent implements OnInit {
 
   myForm: FormGroup = this.formBuilder.group({
     imgUrl: [''],
-    petName: ['testPet', Validators.minLength(2)],
+    petName: ['testPet', [Validators.required, Validators.minLength(2)]],
     bathPeriodicity: ['4', Validators.required],
     isPublic: [true, Validators.required],
     shampoos: ['Shampoo1, Shampoo2'],
     bathTypes: ['casero, estética'],
-    bathers: ['Javier, América'],
+    bathers: ['Javier, América', Validators.required],
   });
 
   ngOnInit(): void {}

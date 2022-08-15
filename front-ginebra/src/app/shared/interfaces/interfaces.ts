@@ -47,14 +47,21 @@ export type IUpdateUserResponse =
 
 // PETS
 
-export interface ILinkedUser {
-  linkedUser: string;
+export interface ILinkedUserElement {
+  _id: string;
+  username: string;
+  email: string;
+  imgUrl: string;
+}
+export type ILinkedUser = {
+  linkedUser: ILinkedUserElement;
   viewAuthorization: boolean;
   editAuthorization: boolean;
   creator: boolean;
-}
+};
 
 export interface IPetBath {
+  _id?: string;
   date: Date;
   bather?: string;
   shampoo?: string;

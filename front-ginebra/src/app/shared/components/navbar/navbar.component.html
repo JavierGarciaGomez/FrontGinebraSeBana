@@ -21,7 +21,7 @@
       <div class="menu-group" [matMenuTriggerFor]="menu">
         <span>Mascotas</span>
         <div class="menu-group--img">
-          <img src="assets/images/Ginebra.jpg" alt="" />
+          <img src="assets/images/petPaw.png" alt="" />
         </div>
       </div>
 
@@ -29,7 +29,9 @@
         <button *ngIf="user" mat-menu-item routerLink="createPet">
           Add New Pet
         </button>
-        <button *ngIf="user" mat-menu-item>Edit pet</button>
+        <button *ngIf="user" mat-menu-item routerLink="petProfile">
+          Perfil mascota seleccionada
+        </button>
         <button *ngFor="let pet of pets" mat-menu-item (click)="selectPet(pet)">
           {{ pet.petName }}
         </button>

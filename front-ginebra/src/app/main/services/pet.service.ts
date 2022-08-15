@@ -38,7 +38,7 @@ export class PetService {
     });
     this.authService.userChange.subscribe((user) => {
       this.getLinkedPetsByUser(user._id);
-      this.getPet();
+      this.getPetById();
     });
   }
   userLinkedPetsChange: Subject<IPet[]> = new Subject<IPet[]>();
@@ -82,10 +82,44 @@ export class PetService {
       .post<ISinglePetResponse>(url, body, { headers })
       .subscribe((resp) => {
         if (resp.ok) {
+          Swal.fire('Mascota creada con éxito', resp.message, 'success');
           this.selectedPetChange.next(resp.pet);
           this.router.navigateByUrl('main/selectedPet');
         } else {
           Swal.fire('Error', resp.message, 'error');
+        }
+      });
+  }
+
+  getPetById(petId: string = '62f4bea5ad3a2957faa248ed') {
+    const url = `${this.baseUrl}${this.routes.getPetById}${petId}`;
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+    this.httpClient
+      .get<IgetPetByIdResponse>(url, { headers })
+      .pipe(
+        tap(),
+        catchError((err: HttpErrorResponse) => {
+          return of(err.error);
+        })
+      )
+      .subscribe((resp: IgetPetByIdResponse) => {
+        if (resp.ok) {
+          const { pet } = resp;
+          if (!pet.imgUrl || pet.imgUrl === '') {
+            pet.imgUrl = 'assets/images/unknownPet.jpg';
+          }
+          const linkedUser = pet.linkedUsers.find(
+            (linkedUser: ILinkedUser) =>
+              linkedUser.linkedUser._id === this.authService.user?._id
+          );
+          pet.viewAuthorization = linkedUser?.viewAuthorization || false;
+          pet.editAuthorization = linkedUser?.editAuthorization || false;
+          pet.creator = linkedUser?.creator || false;
+
+          this.selectedPetChange.next(pet);
         }
       });
   }
@@ -110,7 +144,7 @@ export class PetService {
             if (!pet.imgUrl || pet.imgUrl === '')
               pet.imgUrl = 'assets/images/unknownPet.jpg';
             const linkedUser = pet.linkedUsers.find(
-              (linkedUser) => linkedUser.linkedUser === userId
+              (linkedUser) => linkedUser.linkedUser._id === userId
             );
 
             pet.viewAuthorization = linkedUser?.viewAuthorization || false;
@@ -125,35 +159,23 @@ export class PetService {
       });
   }
 
-  getPet(petId: string = '62f4bea5ad3a2957faa248ed') {
-    const url = `${this.baseUrl}${this.routes.getPetById}${petId}`;
+  updatePet(pet: IPet, petId: string = '') {
+    petId = petId !== '' ? petId : this.selectedPet._id;
+
+    const url = `${this.baseUrl}${this.routes.updatePet}${petId}`;
+    const body = { ...pet };
     const headers = new HttpHeaders().set(
       'x-token',
       localStorage.getItem('token') || ''
     );
-    this.httpClient
-      .get<IgetPetByIdResponse>(url, { headers })
-      .pipe(
-        tap(),
-        catchError((err: HttpErrorResponse) => {
-          return of(err.error);
-        })
-      )
-      .subscribe((resp: IgetPetByIdResponse) => {
-        if (resp.ok) {
-          const { pet } = resp;
-          if (!pet.imgUrl || pet.imgUrl === '') {
-            pet.imgUrl = 'assets/images/unknownPet.jpg';
-          }
-          const linkedUser = pet.linkedUsers.find(
-            (linkedUser: ILinkedUser) =>
-              linkedUser.linkedUser === this.authService.user?._id
-          );
-          pet.viewAuthorization = linkedUser?.viewAuthorization || false;
-          pet.editAuthorization = linkedUser?.editAuthorization || false;
-          pet.creator = linkedUser?.creator || false;
 
-          this.selectedPetChange.next(pet);
+    return this.httpClient
+      .put<ISinglePetResponse>(url, body, { headers })
+      .subscribe((resp) => {
+        if (resp.ok) {
+          this.selectedPetChange.next(resp.pet);
+        } else {
+          Swal.fire('Error', resp.message, 'error');
         }
       });
   }
