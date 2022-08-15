@@ -103,18 +103,37 @@
             <span>{{ element.linkedUser.username }}</span>
           </div>
           <div class="pet-profile--linked-user-actions">
-            <mat-icon>visibility</mat-icon>
-            <mat-icon>edit</mat-icon>
+            <mat-icon *ngIf="element.viewAuthorization">visibility</mat-icon>
+            <mat-icon *ngIf="element.editAuthorization">edit</mat-icon>
+            <mat-icon *ngIf="element.creator">personAdd</mat-icon>
+            <button *ngIf="selectedPet.editAuthorization">Editar</button>
+            <button *ngIf="selectedPet.creator">Remover</button>
           </div>
         </div>
       </div>
     </div>
     <div class="pet-profile--buttons">
-      <button mat-raised-button class="main-button">Editar perfil</button>
-      <button mat-raised-button class="main-button">Cambiar contraseña</button>
+      <button
+        mat-raised-button
+        class="main-button"
+        *ngIf="selectedPet.editAuthorization"
+      >
+        Vincular usuario
+      </button>
+      <button
+        mat-raised-button
+        class="main-button"
+        *ngIf="selectedPet.editAuthorization"
+      >
+        Editar mascota
+      </button>
+      <button mat-raised-button class="main-button" *ngIf="selectedPet.creator">
+        Eliminar mascota
+      </button>
     </div>
+    <pre class="u-hide-on-sm" style="color: white; max-width: 30rem"
+      >{{ selectedPet | json }}
+</pre
+    >
   </div>
 </ng-template>
-<pre style="color: white"
-  >{{ selectedPet | json }}
-</pre>
