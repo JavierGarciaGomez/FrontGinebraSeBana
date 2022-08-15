@@ -1,0 +1,97 @@
+<div class="page-heading--wrapper">
+  <h2 class="page-heading--heading mat-display-1">Editar usuario</h2>
+</div>
+
+<div class="c-container">
+  <form class="c-form --white" [formGroup]="myForm" (ngSubmit)="createPet()">
+    <div class="form-inputs">
+      <div class="form-group">
+        <div class="form-label">Agregar imagen de perfil</div>
+        <input
+          type="file"
+          id="file"
+          name="file"
+          class="u-hide"
+          (change)="handleImgUpload($event)"
+        />
+        <div class="update-img-container">
+          <label for="file">
+            <mat-icon>file_upload</mat-icon>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Nombre de la mascota</div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="petName"
+          placeholder="Nombre de la mascota"
+        />
+        <span class="form-error" *ngIf="invalidField('petName')"
+          >Debe contar al menos con 2 carácteres</span
+        >
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">Periodicidad de los baños</div>
+        <input
+          class="form-input"
+          type="number"
+          formControlName="bathPeriodicity"
+          placeholder="Periodicidad de los baños"
+        />
+        <span class="form-error" *ngIf="invalidField('bathPeriodicity')"
+          >Valor necesario</span
+        >
+      </div>
+      <div class="form-group">
+        <div class="form-label">Mascota pública</div>
+        <input class="form-input" type="checkbox" formControlName="isPublic" />
+      </div>
+      <div class="form-group">
+        <div class="form-label">Champús (separar con comas)</div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="shampoos"
+          placeholder="Champús (separar con comas)"
+        />
+      </div>
+      <div class="form-group">
+        <div class="form-label">
+          Tipos de baño, por ejemplo: casero, estética canina (separar con
+          comas)
+        </div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="bathTypes"
+          placeholder="Tipos de baño (separar con comas)"
+        />
+      </div>
+      <div class="form-group">
+        <div class="form-label">Responsables del baño (separar con comas)</div>
+        <input
+          class="form-input"
+          type="text"
+          formControlName="bathers"
+          placeholder="Responsables del baño"
+        />
+      </div>
+    </div>
+
+    <div class="main-button-wrapper">
+      <button
+        mat-button
+        class="main-button u-w-100 my-2r"
+        color="white"
+        type="submit"
+        [disabled]="myForm.invalid"
+      >
+        Crear
+      </button>
+    </div>
+  </form>
+</div>

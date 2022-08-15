@@ -49,7 +49,7 @@ export const createPet = async (
     return res.status(201).json({
       ok: true,
       message: "Pet created succesfully",
-      savedPet: updatedPet,
+      pet: updatedPet,
     });
   } catch (error) {
     return catchUndefinedError(error, res);

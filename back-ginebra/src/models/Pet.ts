@@ -9,6 +9,7 @@ const petSchema = new Schema<IPet>({
   creationDate: Date,
   shampoos: [String],
   bathTypes: [String],
+  bathers: [String],
   linkedUsers: [
     {
       linkedUser: { type: Schema.Types.ObjectId, ref: "User" },

@@ -69,6 +69,7 @@ export interface IPet {
   creationDate: Date;
   shampoos: string[];
   bathTypes: string[];
+  bathers: string[];
   linkedUsers: ILinkedUser[];
   registeredBaths: IPetBath[];
   viewAuthorization?: boolean;
@@ -98,3 +99,11 @@ export interface ICounterBathInfo {
   nextBathDate: null | Date;
   daysLeft: number;
 }
+
+export interface ISinglePetSuccessResponse {
+  ok: true;
+  message: string;
+  pet: IPet;
+}
+
+export type ISinglePetResponse = ISinglePetSuccessResponse | IErrorResponse;

@@ -11,6 +11,7 @@ import { MaterialModule } from '../material/material.module';
 import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.component';
 import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MainWrapperPageComponent,
     EditUserPageComponent,
     ChangePasswordPageComponent,
+    CreatePetPageComponent,
   ],
   imports: [
     CommonModule,

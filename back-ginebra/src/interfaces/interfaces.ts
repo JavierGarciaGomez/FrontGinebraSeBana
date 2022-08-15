@@ -61,6 +61,7 @@ export interface IPet {
   imgUrl: string;
   creationDate: Date;
   shampoos: string[];
+  bathers: string[];
   bathTypes: string[];
   linkedUsers: ILinkedUser[];
   registeredBaths: IPetBath[];

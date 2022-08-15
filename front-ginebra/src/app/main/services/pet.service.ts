@@ -8,12 +8,15 @@ import {
 } from '@angular/common/http';
 import { tap, map, catchError } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
+import { ISinglePetResponse } from '../../shared/interfaces/interfaces';
 import {
   IgetLinkedPetsResponse,
   IgetPetByIdResponse,
   ILinkedUser,
   IPet,
 } from 'src/app/shared/interfaces/interfaces';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +24,8 @@ import {
 export class PetService {
   constructor(
     private authService: AuthService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private router: Router
   ) {
     this.userLinkedPetsChange.subscribe(
       (userLinkedPets) => (this._userLinkedPets = userLinkedPets)
@@ -56,7 +60,31 @@ export class PetService {
     return this._userLinkedPets;
   }
   get selectedPet() {
-    return this._selectedPet;
+    const pet = { ...this._selectedPet };
+    if (!pet.imgUrl || pet.imgUrl === '')
+      pet.imgUrl = 'assets/images/unknownPet.jpg';
+
+    return pet;
+  }
+
+  createPet(pet: IPet) {
+    const url = `${this.baseUrl}${this.routes.createPet}`;
+    const body = { ...pet };
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+
+    return this.httpClient
+      .post<ISinglePetResponse>(url, body, { headers })
+      .subscribe((resp) => {
+        if (resp.ok) {
+          this.selectedPetChange.next(resp.pet);
+          this.router.navigateByUrl('main/selectedPet');
+        } else {
+          Swal.fire('Error', resp.message, 'error');
+        }
+      });
   }
 
   getLinkedPetsByUser(userId: string) {

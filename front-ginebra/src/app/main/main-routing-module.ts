@@ -6,6 +6,7 @@ import { UserProfilePageComponent } from './pages/user-profile-page/user-profile
 import { PetPageComponent } from './pages/pet-page/pet-page.component';
 import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.component';
 import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
+import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
       {
         path: 'selectedPet',
         component: SelectedPetPageComponent,
+      },
+      {
+        path: 'createPet',
+        component: CreatePetPageComponent,
       },
       {
         path: 'userProfile',
