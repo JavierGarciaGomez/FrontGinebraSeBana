@@ -8,6 +8,7 @@ import {
 import { PetService } from '../../services/pet.service';
 import * as dayjs from 'dayjs';
 import { ICounterBathInfo } from 'src/app/shared/interfaces/interfaces';
+import { IPet } from '../../../shared/interfaces/interfaces';
 dayjs().format();
 
 export interface PeriodicElement {
@@ -24,37 +25,11 @@ export interface PeriodicElement {
 })
 export class SelectedPetPageComponent implements OnInit, AfterViewInit {
   constructor(private petService: PetService) {
+    if (this.selectedPet._id) {
+      this.setCounterBathInfo(this.selectedPet);
+    }
     this.petService.selectedPetChange.subscribe((selectedPet) => {
-      const hasRegisteredBaths = selectedPet.registeredBaths.length > 0;
-      let lastBathDate = null;
-      let daysPassed = null;
-      let nextBathDate: any = dayjs().add(
-        this.selectedPet.bathPeriodicity,
-        'day'
-      );
-      let daysLeft = nextBathDate.diff(dayjs(), 'day');
-      if (hasRegisteredBaths) {
-        const latestBath = selectedPet.registeredBaths.reduce(
-          (prevValue, registerdBath) =>
-            prevValue.date > registerdBath.date ? prevValue : registerdBath
-        );
-        lastBathDate = dayjs(latestBath.date);
-        daysPassed = dayjs().diff(lastBathDate, 'day');
-        nextBathDate = dayjs(lastBathDate).add(
-          this.selectedPet.bathPeriodicity,
-          'day'
-        );
-        daysLeft = nextBathDate.diff(dayjs(), 'day');
-        lastBathDate = lastBathDate.toDate();
-      }
-
-      this._counterBathInfo = {
-        hasRegisteredBaths,
-        lastBathDate,
-        daysPassed,
-        nextBathDate,
-        daysLeft,
-      };
+      this.setCounterBathInfo(selectedPet);
     });
   }
 
@@ -103,5 +78,37 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // this.isLoading = false;
+  }
+
+  setCounterBathInfo(selectedPet: IPet) {
+    const hasRegisteredBaths =
+      selectedPet.registeredBaths && selectedPet.registeredBaths.length > 0;
+    let lastBathDate = null;
+    let daysPassed = null;
+    let nextBathDate: any = dayjs().add(selectedPet.bathPeriodicity, 'day');
+
+    let daysLeft = nextBathDate.diff(dayjs(), 'day');
+    if (hasRegisteredBaths) {
+      const latestBath = selectedPet.registeredBaths.reduce(
+        (prevValue, registerdBath) =>
+          prevValue.date > registerdBath.date ? prevValue : registerdBath
+      );
+      lastBathDate = dayjs(latestBath.date);
+      daysPassed = dayjs().diff(lastBathDate, 'day');
+      nextBathDate = dayjs(lastBathDate).add(
+        this.selectedPet.bathPeriodicity,
+        'day'
+      );
+      daysLeft = nextBathDate.diff(dayjs(), 'day');
+      lastBathDate = lastBathDate.toDate();
+    }
+
+    this._counterBathInfo = {
+      hasRegisteredBaths,
+      lastBathDate,
+      daysPassed,
+      nextBathDate,
+      daysLeft,
+    };
   }
 }
