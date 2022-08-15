@@ -8,30 +8,35 @@ import { PetService } from '../../../main/services/pet.service';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent implements OnInit {
-  user: IUser | null;
-  pets: IPet[] = [];
+  imgUrl = 'assets/images/unknownUser.jpg';
+
+  get user() {
+    return this.authService.user;
+  }
+  get pets() {
+    return this.petService.userLinkedPets;
+  }
+  get selectedPet() {
+    return this.petService.selectedPet;
+  }
 
   constructor(
     private authService: AuthService,
     private petService: PetService
-  ) {
-    this.user = authService.user;
-    this.authService.userChange.subscribe((user) => {
-      this.imgUrl = user.imgUrl || 'assets/images/unknownUser.jpg';
-    });
-    if (this.user) {
-    }
-  }
-
-  imgUrl = 'assets/images/unknownUser.jpg';
+  ) {}
 
   ngOnInit(): void {
     if (this.user?.imgUrl) {
       this.imgUrl = this.user?.imgUrl;
     }
+    console.log(this.selectedPet);
   }
 
   logout() {
     this.authService.logout();
+  }
+
+  selectPet(pet: IPet) {
+    this.petService.selectedPetChange.next(pet);
   }
 }

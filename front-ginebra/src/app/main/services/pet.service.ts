@@ -9,7 +9,9 @@ import {
 import { tap, map, catchError } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import {
-  getLinkedPetsResponse,
+  IgetLinkedPetsResponse,
+  IgetPetByIdResponse,
+  ILinkedUser,
   IPet,
 } from 'src/app/shared/interfaces/interfaces';
 
@@ -24,28 +26,36 @@ export class PetService {
     this.userLinkedPetsChange.subscribe(
       (userLinkedPets) => (this._userLinkedPets = userLinkedPets)
     );
+    this.selectedPetChange.subscribe((pet) => (this._selectedPet = pet));
     this.authService.userChange.subscribe((user) => {
       console.log('PETSERVICE', { user });
       this.getLinkedPetsByUser(user._id);
+      this.getPet();
     });
   }
   userLinkedPetsChange: Subject<IPet[]> = new Subject<IPet[]>();
+  selectedPetChange: Subject<IPet> = new Subject<IPet>();
   private baseUrl: string = `${environment.baseUrl}/pets`;
   private _userLinkedPets: IPet[] = [];
+  private _selectedPet!: IPet;
+
   routes = {
     createPet: '/createPet',
     getPublicPets: '/getPublicPets',
     getAllPets: '/getAllPets',
-    getPetById: '/getPetById/:petId',
+    getPetById: '/getPetById/', // petID
     getLinkedPetsByUser: '/getLinkedPetsByUser/', // :userId
-    updatePet: '/updatePet/:petId',
-    linkPublicPetToUser: '/linkPublicPetToUser/:petId',
-    linkUser: '/linkUser/:petId',
-    deletePet: '/deletePet/:petId',
-    registerBath: '/registerBath/:petId',
+    updatePet: '/updatePet/', // petID
+    linkPublicPetToUser: '/linkPublicPetToUser/', // petID
+    linkUser: '/linkUser/', // petID
+    deletePet: '/deletePet/', // petID
+    registerBath: '/registerBath/', // petID
   };
   get userLinkedPets() {
     return this._userLinkedPets;
+  }
+  get selectedPet() {
+    return this._selectedPet;
   }
 
   getLinkedPetsByUser(userId: string) {
@@ -55,14 +65,14 @@ export class PetService {
       localStorage.getItem('token') || ''
     );
     this.httpClient
-      .get<getLinkedPetsResponse>(url, { headers })
+      .get<IgetLinkedPetsResponse>(url, { headers })
       .pipe(
         tap(),
         catchError((err: HttpErrorResponse) => {
           return of(err.error);
         })
       )
-      .subscribe((resp: getLinkedPetsResponse) => {
+      .subscribe((resp: IgetLinkedPetsResponse) => {
         if (resp.ok) {
           const petsWithImgUrl = resp.pets.map((pet) => {
             if (!pet.imgUrl || pet.imgUrl === '')
@@ -79,6 +89,40 @@ export class PetService {
           });
           console.log('before pet change');
           this.userLinkedPetsChange.next(petsWithImgUrl);
+        }
+      });
+  }
+
+  getPet(petId: string = '62f4bea5ad3a2957faa248ed') {
+    const url = `${this.baseUrl}${this.routes.getPetById}${petId}`;
+    const headers = new HttpHeaders().set(
+      'x-token',
+      localStorage.getItem('token') || ''
+    );
+    this.httpClient
+      .get<IgetPetByIdResponse>(url, { headers })
+      .pipe(
+        tap(),
+        catchError((err: HttpErrorResponse) => {
+          return of(err.error);
+        })
+      )
+      .subscribe((resp: IgetPetByIdResponse) => {
+        if (resp.ok) {
+          const { pet } = resp;
+          if (!pet.imgUrl || pet.imgUrl === '') {
+            pet.imgUrl = 'assets/images/unknownPet.jpg';
+          }
+          const linkedUser = pet.linkedUsers.find(
+            (linkedUser: ILinkedUser) =>
+              linkedUser.linkedUser === this.authService.user?._id
+          );
+          pet.viewAuthorization = linkedUser?.viewAuthorization || false;
+          pet.editAuthorization = linkedUser?.editAuthorization || false;
+          pet.creator = linkedUser?.creator || false;
+
+          console.log('before pet change');
+          this.selectedPetChange.next(pet);
         }
       });
   }

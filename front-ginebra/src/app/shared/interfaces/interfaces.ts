@@ -80,4 +80,11 @@ export interface ILinkedPetsResponse {
   pets: IPet[];
 }
 
-export type getLinkedPetsResponse = ILinkedPetsResponse | IErrorResponse;
+export interface IPetResponse {
+  ok: true;
+  message: string;
+  pet: IPet;
+}
+
+export type IgetLinkedPetsResponse = ILinkedPetsResponse | IErrorResponse;
+export type IgetPetByIdResponse = IPetResponse | IErrorResponse;

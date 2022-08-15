@@ -9,10 +9,9 @@ import { PetService } from './main/services/pet.service';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private authService: AuthService // private petService: PetService
-  ) {
-    console.log('APPCOMPONENT - constructor');
-  }
+    private authService: AuthService,
+    private petService: PetService
+  ) {}
 
   title = 'Ginebra se baña';
   ngOnInit(): void {}
