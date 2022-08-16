@@ -117,7 +117,7 @@
           class="shower-data-table--cell"
           *ngIf="selectedPet.editAuthorization"
         >
-          <button mat-button>Editar</button>
+          <button mat-button (click)="editBath(bath)">Editar</button>
           <button mat-button (click)="deleteBath(bath._id!)">Borrar</button>
         </div>
       </div>
@@ -136,6 +136,6 @@
       Editar mascota
     </button>
   </div>
-  <!-- <pre style="color: white">{{ selectedPet | json }}</pre> -->
+  <pre style="color: white">{{ selectedPet | json }}</pre>
   <!-- <pre style="color: white">{{ counterBathInfo | json }}</pre> -->
 </ng-template>

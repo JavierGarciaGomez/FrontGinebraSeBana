@@ -58,7 +58,7 @@ export class EditPetPageComponent implements OnInit {
 
   updatePet() {
     const pet: IPet = this.myForm.value;
-    console.log({ pet });
+
     pet.shampoos = (pet.shampoos as unknown as string).split(',');
     pet.bathers = (pet.bathers as unknown as string).split(',');
     pet.bathTypes = (pet.bathTypes as unknown as string).split(',');

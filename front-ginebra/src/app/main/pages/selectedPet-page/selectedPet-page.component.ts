@@ -10,6 +10,7 @@ import {
 
 import Swal from 'sweetalert2';
 import { AuthService } from '../../../auth/services/auth.service';
+import { Router } from '@angular/router';
 
 dayjs().format();
 
@@ -28,7 +29,8 @@ export interface PeriodicElement {
 export class SelectedPetPageComponent implements OnInit, AfterViewInit {
   constructor(
     private petService: PetService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     if (this.selectedPet._id) {
       this.setCounterBathInfo(this.selectedPet);
@@ -156,5 +158,10 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
     const selectedPet = { ...this.selectedPet };
     selectedPet.registeredBaths = [...baths];
     this.petService.updatePet(selectedPet);
+  }
+
+  editBath(bath: IPetBath) {
+    this.petService.selectedBath = bath;
+    this.router.navigateByUrl('/main/editBath');
   }
 }

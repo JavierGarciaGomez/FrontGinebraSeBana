@@ -38,7 +38,6 @@ export class PetService {
       this.setSelectedPet();
     });
     this.selectedPetChange.subscribe((pet) => {
-      console.log('PET SERVICE, changing pet', pet);
       this._selectedPet = pet;
     });
     this.authService.userChange.subscribe((user) => {
@@ -55,6 +54,7 @@ export class PetService {
     return this.authService.user;
   }
   ginebraId = '62f4bf67ad3a2957faa248fc';
+  public selectedBath: IPetBath | null = null;
 
   routes = {
     createPet: '/createPet',
@@ -269,7 +269,13 @@ export class PetService {
       .post<ISinglePetResponse>(url, body, { headers })
       .subscribe((resp) => {
         if (resp.ok) {
-          this.selectedPetChange.next(resp.pet);
+          console.log('PETSERVICE REGISTER BATH', resp.pet);
+          const updatedPet = addImgAndAuthorizationsToPet(
+            resp.pet,
+            this.authService.user?._id!
+          );
+          this.selectedPetChange.next(updatedPet);
+
           this.router.navigateByUrl('main/selectedPet');
         } else {
           Swal.fire('Error', resp.message, 'error');

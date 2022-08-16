@@ -8,6 +8,7 @@ import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.com
 import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
 import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.component';
 import { EditPetPageComponent } from './pages/edit-pet-page/edit-pet-page.component';
+import { EditBathPageComponent } from './pages/edit-bath-page/edit-bath-page.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
       {
         path: 'petProfile',
         component: PetPageComponent,
+      },
+      {
+        path: 'editBath',
+        component: EditBathPageComponent,
       },
       {
         path: '**',

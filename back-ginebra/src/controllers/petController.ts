@@ -328,6 +328,9 @@ export const registerBath = async (
 
     const updatedPet = await Pet.findByIdAndUpdate(petId, pet, {
       new: true,
+    }).populate({
+      path: "linkedUsers.linkedUser",
+      select: "username email imgUrl",
     });
 
     return res.status(201).json({
