@@ -106,8 +106,16 @@ export interface IPetResponse {
   pet: IPet;
 }
 
+export interface IMultiplePetsResponse {
+  ok: true;
+  message: string;
+  pets: IPet[];
+}
+
 export type IgetLinkedPetsResponse = ILinkedPetsResponse | IErrorResponse;
 export type IgetPetByIdResponse = IPetResponse | IErrorResponse;
+
+export type IGetMultiplePetsResponse = IMultiplePetsResponse | IErrorResponse;
 
 export interface ICounterBathInfo {
   hasRegisteredBaths: boolean;

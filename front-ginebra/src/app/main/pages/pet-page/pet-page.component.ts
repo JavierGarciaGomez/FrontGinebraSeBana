@@ -53,7 +53,7 @@ export class PetPageComponent implements OnInit {
 
   async linkNewUser() {
     const resp: any = await Swal.fire({
-      title: 'Submit your Github username',
+      title: 'Usuario que desea vincular',
       input: 'text',
       inputAttributes: {
         autocapitalize: 'off',
@@ -124,8 +124,6 @@ export class PetPageComponent implements OnInit {
 
       pet.linkedUsers = newLinkedUsers;
       this.petService.updatePet(pet);
-
-      console.log('after update', this.selectedPet);
     }
   }
 }

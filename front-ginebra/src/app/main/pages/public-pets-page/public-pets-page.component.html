@@ -3,13 +3,20 @@
 </div>
 
 <div class="public-pets-list">
-  <div class="public-pet">
+  <div *ngFor="let item of publicPets" class="public-pet">
     <div class="public-pet--image">
-      <img src="assets/images/unknownUser.jpg" alt="" />
+      <img [src]="item.imgUrl" alt="" />
     </div>
-    <div class="public-pet--name">Azzurra</div>
-    <button mat-raised-button class="public-pet--action main-button">
+    <div class="public-pet--name">{{ item.petName }}</div>
+    <button
+      *ngIf="user"
+      mat-raised-button
+      class="public-pet--action main-button"
+      (click)="linkNewUser(item._id)"
+    >
       Vincular
     </button>
   </div>
+
+  <!-- <pre>{{ publicPets | json }}</pre> -->
 </div>

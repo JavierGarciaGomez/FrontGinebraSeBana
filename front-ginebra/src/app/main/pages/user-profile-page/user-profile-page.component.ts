@@ -23,7 +23,5 @@ export class UserProfilePageComponent implements OnInit {
     this.userLinkedPets = petService.userLinkedPets || [];
   }
 
-  ngOnInit(): void {
-    console.log(this.userLinkedPets);
-  }
+  ngOnInit(): void {}
 }

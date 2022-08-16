@@ -43,7 +43,6 @@ export class CreatePetPageComponent implements OnInit {
     pet.bathers = (pet.bathers as unknown as string).split(',');
     pet.bathTypes = (pet.bathTypes as unknown as string).split(',');
 
-    console.log('CREATEPET, ', pet);
     this.petService.createPet(pet);
 
     // const { username, email, fullName, imgUrl } = this.myForm.value;

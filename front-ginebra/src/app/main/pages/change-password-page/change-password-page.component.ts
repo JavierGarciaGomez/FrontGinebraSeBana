@@ -25,7 +25,6 @@ export class ChangePasswordPageComponent implements OnInit {
   ngOnInit(): void {}
 
   changePassword() {
-    console.log(this.authService.user);
     const { prevPassword, password, passwordConfirmation } = this.myForm.value;
 
     if (password !== passwordConfirmation) {

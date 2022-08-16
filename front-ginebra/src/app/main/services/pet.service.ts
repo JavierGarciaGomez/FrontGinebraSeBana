@@ -9,6 +9,7 @@ import {
 import { tap, map, catchError } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
 import {
+  IGetMultiplePetsResponse,
   IPetBath,
   ISinglePetResponse,
 } from '../../shared/interfaces/interfaces';
@@ -50,6 +51,11 @@ export class PetService {
   private baseUrl: string = `${environment.baseUrl}/pets`;
   private _userLinkedPets: IPet[] = [];
   private _selectedPet!: IPet;
+  private _publicPets: IPet[] = [];
+
+  get publicPets() {
+    return this._publicPets;
+  }
   get user() {
     return this.authService.user;
   }
@@ -97,6 +103,27 @@ export class PetService {
           this.router.navigateByUrl('main/selectedPet');
         } else {
           Swal.fire('Error', resp.message, 'error');
+        }
+      });
+  }
+
+  getPublicPets() {
+    const url = `${this.baseUrl}${this.routes.getPublicPets}`;
+    this.httpClient
+      .get<IGetMultiplePetsResponse>(url)
+      .pipe(
+        tap(),
+        catchError((err: HttpErrorResponse) => {
+          return of(err.error);
+        })
+      )
+      .subscribe((resp: IGetMultiplePetsResponse) => {
+        if (resp.ok) {
+          const { pets } = resp;
+          const newPets = pets.forEach((pet) => {
+            addImgAndAuthorizationsToPet(pet, '');
+          });
+          this._publicPets = pets;
         }
       });
   }
@@ -212,8 +239,9 @@ export class PetService {
       });
   }
 
-  linkUser(newLinkUser: {}) {
-    const url = `${this.baseUrl}${this.routes.linkUser}${this.selectedPet._id}`;
+  linkUser(newLinkUser: {}, petId: string = '') {
+    petId = petId !== '' ? petId : this.selectedPet._id;
+    const url = `${this.baseUrl}${this.routes.linkUser}${petId}`;
     const headers = new HttpHeaders().set(
       'x-token',
       localStorage.getItem('token') || ''
@@ -224,6 +252,7 @@ export class PetService {
       .put<ISinglePetResponse>(url, body, { headers })
       .subscribe((resp) => {
         if (resp.ok) {
+          this.getLinkedPetsByUser();
           this.selectedPetChange.next(resp.pet);
         } else {
           Swal.fire('Error', resp.message, 'error');
@@ -269,7 +298,6 @@ export class PetService {
       .post<ISinglePetResponse>(url, body, { headers })
       .subscribe((resp) => {
         if (resp.ok) {
-          console.log('PETSERVICE REGISTER BATH', resp.pet);
           const updatedPet = addImgAndAuthorizationsToPet(
             resp.pet,
             this.authService.user?._id!

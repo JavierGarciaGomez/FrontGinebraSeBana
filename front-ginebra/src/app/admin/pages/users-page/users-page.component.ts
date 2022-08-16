@@ -37,7 +37,6 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
   fetchData = () => {
     this.authService.getUsers().subscribe((response: IGetUsersResponse) => {
       if (response.ok) {
-        console.log(response.users);
         this.dataSource = new MatTableDataSource(response.users);
         this.dataSource.sort = this.sort;
       } else {
@@ -64,7 +63,6 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log({ id });
         this.authService.deleteUser(id).subscribe((response) => {
           if (response.ok) {
             Swal.fire(
@@ -72,7 +70,7 @@ export class UsersPageComponent implements OnInit, AfterViewInit {
               'El usuario ha sido eliminado con éxito',
               'success'
             );
-            console.log('BEFORE FETCHING DATA');
+
             this.fetchData();
           } else {
             Swal.fire('Error', response.message, 'error');
