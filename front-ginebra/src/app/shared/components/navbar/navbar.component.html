@@ -39,6 +39,13 @@
         <!-- TODO Change Pets -->
       </mat-menu>
 
+      <div
+        *ngIf="user?.role === 'admin'"
+        class="menu-group"
+        routerLink="/admin/users"
+      >
+        <span>Admin</span>
+      </div>
       <div *ngIf="user" class="menu-group" routerLink="userProfile">
         <span>Perfil</span>
         <div class="menu-group--img">

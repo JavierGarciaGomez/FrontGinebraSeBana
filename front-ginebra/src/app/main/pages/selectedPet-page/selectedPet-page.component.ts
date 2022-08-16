@@ -96,6 +96,8 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
       ],
     };
 
+    delete lastBath._id;
+
     lastBath.date = new Date();
 
     this.petService.registerBath(lastBath);

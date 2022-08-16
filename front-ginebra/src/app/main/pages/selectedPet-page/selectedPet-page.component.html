@@ -70,7 +70,7 @@
   </div> -->
   </div>
 
-  <div class="main-button-wrapper">
+  <div class="main-button-wrapper" *ngIf="selectedPet.editAuthorization">
     <button
       mat-raised-button
       class="main-button"
@@ -90,7 +90,12 @@
         <div class="shower-data-table--heading u-hide-on-sm">Tipo</div>
         <div class="shower-data-table--heading u-hide-on-sm">Realizado por</div>
         <div class="shower-data-table--heading u-hide-on-sm">Champús</div>
-        <div class="shower-data-table--heading">Acciones</div>
+        <div
+          class="shower-data-table--heading"
+          *ngIf="selectedPet.editAuthorization"
+        >
+          Acciones
+        </div>
       </div>
       <div
         *ngFor="let bath of selectedPet.registeredBaths"
@@ -108,7 +113,10 @@
         <div class="shower-data-table--cell u-hide-on-sm">
           {{ bath.shampoo }}
         </div>
-        <div class="shower-data-table--cell">
+        <div
+          class="shower-data-table--cell"
+          *ngIf="selectedPet.editAuthorization"
+        >
           <button mat-button>Editar</button>
           <button mat-button (click)="deleteBath(bath._id!)">Borrar</button>
         </div>
@@ -116,16 +124,11 @@
     </div>
   </div>
   <div class="main-button-wrapper">
-    <button
-      *ngIf="user"
-      mat-raised-button
-      class="main-button"
-      routerLink="/main/petProfile"
-    >
+    <button mat-raised-button class="main-button" routerLink="/main/petProfile">
       Ver perfil de mascota
     </button>
     <button
-      *ngIf="user"
+      *ngIf="selectedPet.editAuthorization"
       mat-raised-button
       class="main-button"
       routerLink="/main/editPet"
