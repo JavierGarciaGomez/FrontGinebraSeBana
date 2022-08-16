@@ -79,7 +79,7 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
         'day'
       );
       daysLeft = nextBathDate.diff(dayjs(), 'day') + 1;
-      console.log(nextBathDate);
+      // console.log(nextBathDate);
       lastBathDate = lastBathDate.toDate();
     }
 

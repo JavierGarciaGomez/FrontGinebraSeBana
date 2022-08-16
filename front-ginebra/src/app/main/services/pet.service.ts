@@ -39,7 +39,7 @@ export class PetService {
       this.setSelectedPet();
     });
     this.selectedPetChange.subscribe((pet) => {
-      console.log('selected pet change', pet);
+      // console.log('selected pet change', pet);
       this._selectedPet = pet;
     });
     this.authService.userChange.subscribe((user) => {
