@@ -289,7 +289,6 @@ export const deletePet = async (
 
     const isAdmin = userRequestRole === "admin";
     const isCreator = checkIfUserIsCreator(pet, userRequest_id);
-    console.log({ isAdmin, isCreator });
 
     if (!isCreator && !isAdmin) return notAuthorizedResponse(res);
 

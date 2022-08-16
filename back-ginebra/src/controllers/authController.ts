@@ -150,7 +150,6 @@ export const renewToken = async (req: IGetUserAuthRequest, res: Response) => {
 
     const token = await generateJwt(_id, username, email, role);
     const user = await User.findById(_id);
-    console.log({ user });
 
     return res.status(201).json({
       ok: true,
@@ -172,7 +171,6 @@ export const updateUser = async (
     const { userReq } = req;
     const { role: userRequestRole, _id: userRequest_id } = userReq!;
     const userNewData = { ...req.body };
-    console.log({ userNewData });
 
     const user = await User.findById(userId);
     if (!user) return notFoundResponse(res, "usuario");

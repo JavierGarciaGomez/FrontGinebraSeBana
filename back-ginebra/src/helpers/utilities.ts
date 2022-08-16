@@ -24,7 +24,6 @@ export const linkUserToPet = async (
 
   let newLinkedUsers = pet?.linkedUsers.map((element) => {
     if (element.linkedUser._id.toString() === userId) {
-      console.log("IS PREEX");
       preexistenUser = true;
       element.editAuthorization = editAuthorization;
       element.viewAuthorization = viewAuthorization;
@@ -81,8 +80,6 @@ export const isAuthorizedToEditPet = (
 };
 
 export const checkIfUserIsCreator = (pet: IPet, userId: string): boolean => {
-  console.log({ pet, userId });
-  console.log({ linked: pet.linkedUsers });
   const isCreator = pet.linkedUsers.find(
     (linkedUser) =>
       linkedUser.linkedUser.toString() === userId && linkedUser.creator
