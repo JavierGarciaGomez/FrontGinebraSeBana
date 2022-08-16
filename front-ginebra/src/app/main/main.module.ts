@@ -12,6 +12,7 @@ import { EditUserPageComponent } from './pages/edit-user-page/edit-user-page.com
 import { ChangePasswordPageComponent } from './pages/change-password-page/change-password-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.component';
+import { EditPetPageComponent } from './pages/edit-pet-page/edit-pet-page.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.
     EditUserPageComponent,
     ChangePasswordPageComponent,
     CreatePetPageComponent,
+    EditPetPageComponent,
   ],
   imports: [
     CommonModule,
