@@ -27,9 +27,8 @@ export class AuthService {
     private router: Router // private petService: PetService
   ) {
     this.userChange.subscribe((user) => {
+      console.log('AUTH SERVICE. im about to change the user', user);
       this._user = user;
-
-      // this.petService.getLinkedPetsByUser(user._id);
     });
 
     this.validateJwt().subscribe((resp) => {});
@@ -122,6 +121,7 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
+    this.userChange.next(undefined);
 
     this.router.navigateByUrl('/');
   }

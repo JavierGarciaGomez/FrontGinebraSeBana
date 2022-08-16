@@ -31,15 +31,19 @@ export class PetService {
     private httpClient: HttpClient,
     private router: Router
   ) {
-    this.userLinkedPetsChange.subscribe(
-      (userLinkedPets) => (this._userLinkedPets = userLinkedPets)
-    );
+    this.setSelectedPet();
+
+    this.userLinkedPetsChange.subscribe((userLinkedPets) => {
+      this._userLinkedPets = userLinkedPets;
+      this.setSelectedPet();
+    });
     this.selectedPetChange.subscribe((pet) => {
+      console.log('PET SERVICE, changing pet', pet);
       this._selectedPet = pet;
     });
     this.authService.userChange.subscribe((user) => {
-      this.getLinkedPetsByUser(user._id);
-      this.getPetById();
+      this.getLinkedPetsByUser();
+      this.setSelectedPet();
     });
   }
   userLinkedPetsChange: Subject<IPet[]> = new Subject<IPet[]>();
@@ -47,6 +51,9 @@ export class PetService {
   private baseUrl: string = `${environment.baseUrl}/pets`;
   private _userLinkedPets: IPet[] = [];
   private _selectedPet!: IPet;
+  get user() {
+    return this.authService.user;
+  }
   ginebraId = '62f4bf67ad3a2957faa248fc';
 
   routes = {
@@ -173,7 +180,6 @@ export class PetService {
           const petsWithImgUrl = resp.pets.map((pet) =>
             addImgAndAuthorizationsToPet(pet, userId)
           );
-
           this.userLinkedPetsChange.next(petsWithImgUrl);
         }
       });
@@ -269,5 +275,25 @@ export class PetService {
           Swal.fire('Error', resp.message, 'error');
         }
       });
+  }
+
+  setSelectedPet() {
+    if (!this.user) {
+      this.getGinebra();
+      return;
+    }
+    if (this.user) {
+      if (this.userLinkedPets && this.userLinkedPets.length > 0) {
+        const linkedPetExist = this.userLinkedPets.find(
+          (userLinkedPet) => userLinkedPet._id === this._selectedPet._id
+        );
+        if (linkedPetExist) {
+          return;
+        }
+        this.selectedPetChange.next(this.userLinkedPets[0]);
+        return;
+      }
+      this.getGinebra();
+    }
   }
 }
