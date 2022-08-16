@@ -24,3 +24,9 @@ export const addImgAndAuthorizationsToPet = (pet: IPet, userId: string) => {
 
   return pet;
 };
+
+export const convertStringToArray = (text: string) => {
+  if (text.includes(',')) {
+    return (text as unknown as string).split(',');
+  } else return [text];
+};

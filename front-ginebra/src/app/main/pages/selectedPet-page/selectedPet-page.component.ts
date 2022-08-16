@@ -136,7 +136,7 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
     });
 
     const shampooSelect: any = await Swal.fire({
-      title: '¿Quién bañó a la mascota?',
+      title: '¿Qué champú se usó?',
       input: 'radio',
       inputOptions: shampoosOptions,
       showCancelButton: true,

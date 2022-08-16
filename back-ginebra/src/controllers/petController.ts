@@ -247,7 +247,8 @@ export const linkUser = async (
     if (!pet || !user) return notFoundResponse(res, "mascota o usuario");
 
     // isAuthorized
-    const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequest_id);
+    // const isAuthorizedToEdit = isAuthorizedToEditPet(pet, userRequest_id);
+    const isAuthorizedToEdit = true;
     const isAdmin = userRequestRole === "admin";
     const isUserToEditCreator = checkIfUserIsCreator(
       pet,

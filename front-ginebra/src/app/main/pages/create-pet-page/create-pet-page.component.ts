@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { convertStringToArray } from 'src/app/shared/helpers/helpers';
 import { IPet } from 'src/app/shared/interfaces/interfaces';
 import { AuthService } from '../../../auth/services/auth.service';
 import { SharedService } from '../../../shared/services/shared.service';
@@ -22,12 +23,12 @@ export class CreatePetPageComponent implements OnInit {
 
   myForm: FormGroup = this.formBuilder.group({
     imgUrl: [''],
-    petName: ['testPet', [Validators.required, Validators.minLength(2)]],
-    bathPeriodicity: ['4', Validators.required],
+    petName: ['', [Validators.required, Validators.minLength(2)]],
+    bathPeriodicity: ['', Validators.required],
     isPublic: [true, Validators.required],
-    shampoos: ['Shampoo1, Shampoo2'],
-    bathTypes: ['casero, estética'],
-    bathers: ['Javier, América', Validators.required],
+    shampoos: [''],
+    bathTypes: [''],
+    bathers: ['', Validators.required],
   });
 
   ngOnInit(): void {}
@@ -39,9 +40,9 @@ export class CreatePetPageComponent implements OnInit {
   createPet() {
     const pet: IPet = this.myForm.value;
 
-    pet.shampoos = (pet.shampoos as unknown as string).split(',');
-    pet.bathers = (pet.bathers as unknown as string).split(',');
-    pet.bathTypes = (pet.bathTypes as unknown as string).split(',');
+    pet.shampoos = convertStringToArray(pet.shampoos.toString());
+    pet.bathers = convertStringToArray(pet.bathers.toString());
+    pet.bathTypes = convertStringToArray(pet.bathTypes.toString());
 
     this.petService.createPet(pet);
 
