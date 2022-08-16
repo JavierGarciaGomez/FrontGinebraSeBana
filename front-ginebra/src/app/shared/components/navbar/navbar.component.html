@@ -27,12 +27,16 @@
       </div>
 
       <mat-menu #menu="matMenu">
-        <button *ngIf="user" mat-menu-item routerLink="createPet">
-          Add New Pet
+        <button *ngIf="user" mat-menu-item routerLink="/main/createPet">
+          Nueva mascota
         </button>
-        <button *ngIf="user" mat-menu-item routerLink="petProfile">
+        <button *ngIf="user" mat-menu-item routerLink="/main/petProfile">
           Perfil mascota seleccionada
         </button>
+        <button *ngIf="user" mat-menu-item routerLink="/main/publicPets">
+          Mascotas públicas
+        </button>
+        <mat-divider></mat-divider>
         <button *ngFor="let pet of pets" mat-menu-item (click)="selectPet(pet)">
           {{ pet.petName }}
         </button>

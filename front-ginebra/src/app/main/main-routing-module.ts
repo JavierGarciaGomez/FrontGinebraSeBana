@@ -9,6 +9,7 @@ import { ChangePasswordPageComponent } from './pages/change-password-page/change
 import { CreatePetPageComponent } from './pages/create-pet-page/create-pet-page.component';
 import { EditPetPageComponent } from './pages/edit-pet-page/edit-pet-page.component';
 import { EditBathPageComponent } from './pages/edit-bath-page/edit-bath-page.component';
+import { PublicPetsPageComponent } from './pages/public-pets-page/public-pets-page.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
       {
         path: 'editBath',
         component: EditBathPageComponent,
+      },
+      {
+        path: 'publicPets',
+        component: PublicPetsPageComponent,
       },
       {
         path: '**',

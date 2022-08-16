@@ -8,6 +8,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDivider, MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [],
@@ -20,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatMenuModule,
     MatGridListModule,
     MatProgressSpinnerModule,
+    MatDividerModule,
   ],
 })
 export class MaterialModule {}
