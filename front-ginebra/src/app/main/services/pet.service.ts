@@ -39,6 +39,7 @@ export class PetService {
       this.setSelectedPet();
     });
     this.selectedPetChange.subscribe((pet) => {
+      console.log('selected pet change', pet);
       this._selectedPet = pet;
     });
     this.authService.userChange.subscribe((user) => {
@@ -59,7 +60,7 @@ export class PetService {
   get user() {
     return this.authService.user;
   }
-  ginebraId = '62f4bf67ad3a2957faa248fc';
+  ginebraId = '62fbc56a7ac3e2b536ed1153';
   public selectedBath: IPetBath | null = null;
 
   routes = {
@@ -99,7 +100,11 @@ export class PetService {
       .subscribe((resp) => {
         if (resp.ok) {
           Swal.fire('Mascota creada con éxito', resp.message, 'success');
-          this.selectedPetChange.next(resp.pet);
+          const updatedPet = addImgAndAuthorizationsToPet(
+            resp.pet,
+            this.authService.user?._id!
+          );
+          this.selectedPetChange.next(updatedPet);
           this.router.navigateByUrl('main/selectedPet');
         } else {
           Swal.fire('Error', resp.message, 'error');
@@ -168,18 +173,11 @@ export class PetService {
       .subscribe((resp: IgetPetByIdResponse) => {
         if (resp.ok) {
           const { pet } = resp;
-          if (!pet.imgUrl || pet.imgUrl === '') {
-            pet.imgUrl = 'assets/images/unknownPet.jpg';
-          }
-          const linkedUser = pet.linkedUsers.find(
-            (linkedUser: ILinkedUser) =>
-              linkedUser.linkedUser._id === this.authService.user?._id
+          const updatedPet = addImgAndAuthorizationsToPet(
+            resp.pet,
+            this.authService.user?._id!
           );
-          pet.viewAuthorization = linkedUser?.viewAuthorization || false;
-          pet.editAuthorization = linkedUser?.editAuthorization || false;
-          pet.creator = linkedUser?.creator || false;
-
-          this.selectedPetChange.next(pet);
+          this.selectedPetChange.next(updatedPet);
         }
       });
   }
@@ -253,7 +251,11 @@ export class PetService {
       .subscribe((resp) => {
         if (resp.ok) {
           this.getLinkedPetsByUser();
-          this.selectedPetChange.next(resp.pet);
+          const updatedPet = addImgAndAuthorizationsToPet(
+            resp.pet,
+            this.authService.user?._id!
+          );
+          this.selectedPetChange.next(updatedPet);
         } else {
           Swal.fire('Error', resp.message, 'error');
         }
@@ -321,7 +323,7 @@ export class PetService {
         const linkedPetExist = this.userLinkedPets.find(
           (userLinkedPet) => userLinkedPet._id === this._selectedPet._id
         );
-        if (linkedPetExist) {
+        if (linkedPetExist && this.selectedPet._id !== this.ginebraId) {
           return;
         }
         this.selectedPetChange.next(this.userLinkedPets[0]);

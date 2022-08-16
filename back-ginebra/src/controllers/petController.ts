@@ -116,7 +116,7 @@ export const getLinkedPetsByUser = async (
 
 export const getGinebra = async (req: IGetUserAuthRequest, res: Response) => {
   try {
-    const pet = await Pet.findById("62f4bf67ad3a2957faa248fc");
+    const pet = await Pet.findById("62fbc56a7ac3e2b536ed1153");
 
     if (!pet) return notFoundResponse(res, "mascota");
 

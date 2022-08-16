@@ -102,7 +102,7 @@
         class="shower-data-table--row"
       >
         <div class="shower-data-table--cell">
-          {{ bath.date | date: "shortDate" }}
+          {{ bath.date | date }}
         </div>
         <div class="shower-data-table--cell u-hide-on-sm">
           {{ bath.bathType }}
@@ -136,6 +136,6 @@
       Editar mascota
     </button>
   </div>
-  <pre style="color: white">{{ selectedPet | json }}</pre>
+  <!-- <pre style="color: white">{{ selectedPet | json }}</pre> -->
   <!-- <pre style="color: white">{{ counterBathInfo | json }}</pre> -->
 </ng-template>
