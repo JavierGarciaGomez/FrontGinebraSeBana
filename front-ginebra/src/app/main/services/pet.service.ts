@@ -125,7 +125,11 @@ export class PetService {
       });
   }
 
-  getLinkedPetsByUser(userId: string) {
+  getLinkedPetsByUser(userId: string = '') {
+    if (userId === '' || !userId) {
+      userId = this.authService.user?._id!;
+    }
+
     const url = `${this.baseUrl}${this.routes.getLinkedPetsByUser}${userId}`;
     const headers = new HttpHeaders().set(
       'x-token',
@@ -174,7 +178,9 @@ export class PetService {
       .put<ISinglePetResponse>(url, body, { headers })
       .subscribe((resp) => {
         if (resp.ok) {
+          Swal.fire('Éxito', resp.message, 'success');
           this.selectedPetChange.next(resp.pet);
+          this.getLinkedPetsByUser();
         } else {
           Swal.fire('Error', resp.message, 'error');
         }
