@@ -158,6 +158,9 @@ export const updatePet = async (
 
     const updatedPet = await Pet.findByIdAndUpdate(petId, petNewData, {
       new: true,
+    }).populate({
+      path: "linkedUsers.linkedUser",
+      select: "username email imgUrl",
     });
 
     return res.status(201).json({

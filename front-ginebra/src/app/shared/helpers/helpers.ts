@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import { IPet } from '../interfaces/interfaces';
 
 export const fireSwalConfirmation = async () => {
   const isConfirmed = await Swal.fire({
@@ -8,4 +9,18 @@ export const fireSwalConfirmation = async () => {
     showCancelButton: true,
   });
   return isConfirmed;
+};
+
+export const addImgAndAuthorizationsToPet = (pet: IPet, userId: string) => {
+  if (!pet.imgUrl || pet.imgUrl === '')
+    pet.imgUrl = 'assets/images/unknownPet.jpg';
+
+  const linkedUser = pet.linkedUsers.find(
+    (linkedUser) => linkedUser.linkedUser._id === userId
+  );
+  pet.viewAuthorization = linkedUser?.viewAuthorization || false;
+  pet.editAuthorization = linkedUser?.editAuthorization || false;
+  pet.creator = linkedUser?.creator || false;
+
+  return pet;
 };

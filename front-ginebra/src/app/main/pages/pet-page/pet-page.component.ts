@@ -27,13 +27,20 @@ export class PetPageComponent implements OnInit {
     isConfirmed && this.petService.deletePet();
   }
 
-  async removeLinkedUser(id: string) {
-    console.log(this.selectedPet.linkedUsers);
+  async removeLinkedUser(userId: string) {
+    const linkedUserData = this.selectedPet.linkedUsers.find(
+      (linkedUser) => linkedUser.linkedUser._id === userId
+    );
+
+    if (linkedUserData?.creator) {
+      await Swal.fire('Error', 'no puedes modificar al creador', 'error');
+      return;
+    }
     const { isConfirmed } = await fireSwalConfirmation();
 
     if (isConfirmed) {
       const newLinkedUsers = this.selectedPet.linkedUsers.filter(
-        (element) => element.linkedUser._id !== id
+        (element) => element.linkedUser._id !== userId
       );
 
       const pet = { ...this.selectedPet };
@@ -93,5 +100,32 @@ export class PetPageComponent implements OnInit {
     };
 
     this.petService.linkUser(newLinkedUser);
+  }
+
+  async changeEditAuthorization(userId: string) {
+    const linkedUserData = this.selectedPet.linkedUsers.find(
+      (linkedUser) => linkedUser.linkedUser._id === userId
+    );
+
+    if (linkedUserData?.creator) {
+      await Swal.fire('Error', 'no puedes modificar al creador', 'error');
+      return;
+    }
+
+    const { isConfirmed } = await fireSwalConfirmation();
+    const pet = { ...this.selectedPet };
+    if (isConfirmed) {
+      const newLinkedUsers = pet.linkedUsers.map((element) => {
+        if (element.linkedUser._id === userId)
+          element.editAuthorization = !element.editAuthorization;
+
+        return element;
+      });
+
+      pet.linkedUsers = newLinkedUsers;
+      this.petService.updatePet(pet);
+
+      console.log('after update', this.selectedPet);
+    }
   }
 }

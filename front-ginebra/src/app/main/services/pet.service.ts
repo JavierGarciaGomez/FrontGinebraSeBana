@@ -20,6 +20,7 @@ import {
 } from 'src/app/shared/interfaces/interfaces';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { addImgAndAuthorizationsToPet } from 'src/app/shared/helpers/helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -145,19 +146,9 @@ export class PetService {
       )
       .subscribe((resp: IgetLinkedPetsResponse) => {
         if (resp.ok) {
-          const petsWithImgUrl = resp.pets.map((pet) => {
-            if (!pet.imgUrl || pet.imgUrl === '')
-              pet.imgUrl = 'assets/images/unknownPet.jpg';
-            const linkedUser = pet.linkedUsers.find(
-              (linkedUser) => linkedUser.linkedUser._id === userId
-            );
-
-            pet.viewAuthorization = linkedUser?.viewAuthorization || false;
-            pet.editAuthorization = linkedUser?.editAuthorization || false;
-            pet.creator = linkedUser?.creator || false;
-
-            return pet;
-          });
+          const petsWithImgUrl = resp.pets.map((pet) =>
+            addImgAndAuthorizationsToPet(pet, userId)
+          );
 
           this.userLinkedPetsChange.next(petsWithImgUrl);
         }
@@ -179,7 +170,11 @@ export class PetService {
       .subscribe((resp) => {
         if (resp.ok) {
           Swal.fire('Éxito', resp.message, 'success');
-          this.selectedPetChange.next(resp.pet);
+          const updatedPet = addImgAndAuthorizationsToPet(
+            resp.pet,
+            this.authService.user?._id!
+          );
+          this.selectedPetChange.next(updatedPet);
           this.getLinkedPetsByUser();
         } else {
           Swal.fire('Error', resp.message, 'error');

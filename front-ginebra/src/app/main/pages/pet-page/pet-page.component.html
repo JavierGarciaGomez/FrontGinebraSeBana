@@ -85,29 +85,38 @@
         <span>Usuarios vinculados</span>
       </div>
       <div class="pet-profile--linked-users-list">
-        <div
-          *ngFor="let element of selectedPet.linkedUsers"
-          class="pet-profile--linked-user"
-        >
-          <div class="pet-profile--linked-user-img">
-            <img
-              [src]="
-                element.linkedUser.imgUrl
-                  ? element.linkedUser.imgUrl
-                  : unknownUserImgSrc
-              "
-              alt=""
-            />
+        <div *ngFor="let element of selectedPet.linkedUsers" class="c-linked">
+          <div class="c-linked--data">
+            <div class="c-linked--imgWrapper">
+              <img
+                [src]="
+                  element.linkedUser.imgUrl
+                    ? element.linkedUser.imgUrl
+                    : unknownUserImgSrc
+                "
+                alt=""
+              />
+            </div>
+            <div class="c-linked--name">
+              <span>{{ element.linkedUser.username }}</span>
+            </div>
           </div>
-          <div class="pet-profile-linked-user-name">
-            <span>{{ element.linkedUser.username }}</span>
-          </div>
-          <div class="pet-profile--linked-user-actions">
+          <div class="c-linked--authorizations">
+            <p>Autorizaciones:</p>
             <mat-icon *ngIf="element.viewAuthorization">visibility</mat-icon>
             <mat-icon *ngIf="element.editAuthorization">edit</mat-icon>
             <mat-icon *ngIf="element.creator">personAdd</mat-icon>
-            <button *ngIf="selectedPet.editAuthorization">Editar</button>
+          </div>
+          <div class="c-linked--actions">
             <button
+              mat-stroked-button
+              *ngIf="selectedPet.editAuthorization"
+              (click)="changeEditAuthorization(element.linkedUser._id)"
+            >
+              Cambiar permiso edición
+            </button>
+            <button
+              mat-stroked-button
               *ngIf="selectedPet.creator"
               (click)="removeLinkedUser(element.linkedUser._id)"
             >
