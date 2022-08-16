@@ -114,6 +114,22 @@ export const getLinkedPetsByUser = async (
   }
 };
 
+export const getGinebra = async (req: IGetUserAuthRequest, res: Response) => {
+  try {
+    const pet = await Pet.findById("62f4bf67ad3a2957faa248fc");
+
+    if (!pet) return notFoundResponse(res, "mascota");
+
+    return res.status(201).json({
+      ok: true,
+      message: "getPet",
+      pet,
+    });
+  } catch (error) {
+    return catchUndefinedError(error, res);
+  }
+};
+
 export const getPetById = async (req: IGetUserAuthRequest, res: Response) => {
   try {
     const { userReq } = req;

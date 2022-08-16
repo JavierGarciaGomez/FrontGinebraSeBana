@@ -1,4 +1,5 @@
-<mat-grid-list cols="1" *ngIf="!user || !pets || !selectedPet; else divMain">
+<mat-grid-list cols="1" *ngIf="4 !== 4; else divMain">
+  <!-- !user || !pets || !selectedPet -->
   <mat-grid-tile>
     <mat-spinner></mat-spinner>
   </mat-grid-tile>
@@ -18,7 +19,7 @@
         </div>
       </div>
       <!-- TODO IF NOT USER SHOW PUBLIC -->
-      <div class="menu-group" [matMenuTriggerFor]="menu">
+      <div *ngIf="user" class="menu-group" [matMenuTriggerFor]="menu">
         <span>Mascotas</span>
         <div class="menu-group--img">
           <img src="assets/images/petPaw.png" alt="" />
@@ -51,7 +52,7 @@
         </div>
       </div>
 
-      <button *ngIf="user" mat-icon-button (click)="logout()">
+      <button mat-icon-button (click)="logout()">
         <mat-icon>logout</mat-icon>
       </button>
     </div>

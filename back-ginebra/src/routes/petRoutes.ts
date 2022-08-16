@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from "express";
 import { check } from "express-validator";
 import { fieldValidator } from "../middlewares/fieldValidator";
 import { validateJwt } from "../helpers/validateJwt";
+import { getGinebra } from "../controllers/petController";
 import {
   linkPublicPetToUser,
   linkUser,
@@ -24,6 +25,7 @@ const routes = {
   getPublicPets: "/getPublicPets",
   getAllPets: "/getAllPets",
   getPetById: "/getPetById/:petId",
+  getGinebra: "/getGinebra",
   getLinkedPetsByUser: "/getLinkedPetsByUser/:userId",
   updatePet: "/updatePet/:petId",
   linkPublicPetToUser: "/linkPublicPetToUser/:petId",
@@ -53,6 +55,7 @@ petRoutes.post(
 );
 petRoutes.get(routes.getPublicPets, getPublicPets);
 petRoutes.get(routes.getAllPets, validateJwt, getAllPets);
+petRoutes.get(routes.getGinebra, getGinebra);
 petRoutes.get(routes.getPetById, validateJwt, getPetById);
 petRoutes.get(routes.getLinkedPetsByUser, validateJwt, getLinkedPetsByUser);
 petRoutes.put(routes.updatePet, validateJwt, updatePet);

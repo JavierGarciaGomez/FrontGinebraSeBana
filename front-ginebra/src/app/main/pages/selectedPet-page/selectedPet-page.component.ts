@@ -9,6 +9,7 @@ import {
 } from 'src/app/shared/interfaces/interfaces';
 
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../auth/services/auth.service';
 
 dayjs().format();
 
@@ -25,7 +26,10 @@ export interface PeriodicElement {
   styles: [],
 })
 export class SelectedPetPageComponent implements OnInit, AfterViewInit {
-  constructor(private petService: PetService) {
+  constructor(
+    private petService: PetService,
+    private authService: AuthService
+  ) {
     if (this.selectedPet._id) {
       this.setCounterBathInfo(this.selectedPet);
     }
@@ -42,6 +46,9 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
   }
   get counterBathInfo() {
     return this._counterBathInfo;
+  }
+  get user() {
+    return this.authService.user;
   }
 
   ngOnInit(): void {}
@@ -80,6 +87,18 @@ export class SelectedPetPageComponent implements OnInit, AfterViewInit {
       nextBathDate,
       daysLeft,
     };
+  }
+
+  async registerSimplifiedBath() {
+    const lastBath = {
+      ...this.selectedPet.registeredBaths[
+        this.selectedPet.registeredBaths.length - 1
+      ],
+    };
+
+    lastBath.date = new Date();
+
+    this.petService.registerBath(lastBath);
   }
 
   async registerBath() {

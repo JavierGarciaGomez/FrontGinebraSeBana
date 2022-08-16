@@ -23,7 +23,10 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private petService: PetService
-  ) {}
+  ) {
+    console.log('user', authService.user);
+    console.log('pet', petService.selectedPet);
+  }
 
   ngOnInit(): void {
     if (this.user?.imgUrl) {

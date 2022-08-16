@@ -71,6 +71,13 @@
   </div>
 
   <div class="main-button-wrapper">
+    <button
+      mat-raised-button
+      class="main-button"
+      (click)="registerSimplifiedBath()"
+    >
+      Registro baño simplificado
+    </button>
     <button mat-raised-button class="main-button" (click)="registerBath()">
       Registrar nuevo baño
     </button>
@@ -109,10 +116,23 @@
     </div>
   </div>
   <div class="main-button-wrapper">
-    <button mat-raised-button class="main-button" routerLink="/main/petProfile">
+    <button
+      *ngIf="user"
+      mat-raised-button
+      class="main-button"
+      routerLink="/main/petProfile"
+    >
       Ver perfil de mascota
     </button>
+    <button
+      *ngIf="user"
+      mat-raised-button
+      class="main-button"
+      routerLink="/main/editPet"
+    >
+      Editar mascota
+    </button>
   </div>
-  <pre style="color: white">{{ selectedPet | json }}</pre>
-  <pre style="color: white">{{ counterBathInfo | json }}</pre>
+  <!-- <pre style="color: white">{{ selectedPet | json }}</pre> -->
+  <!-- <pre style="color: white">{{ counterBathInfo | json }}</pre> -->
 </ng-template>

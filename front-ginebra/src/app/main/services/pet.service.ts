@@ -47,12 +47,13 @@ export class PetService {
   private baseUrl: string = `${environment.baseUrl}/pets`;
   private _userLinkedPets: IPet[] = [];
   private _selectedPet!: IPet;
-  ginebraId = '62f4bea5ad3a2957faa248ed';
+  ginebraId = '62f4bf67ad3a2957faa248fc';
 
   routes = {
     createPet: '/createPet',
     getPublicPets: '/getPublicPets',
     getAllPets: '/getAllPets',
+    getGinebra: '/getGinebra',
     getPetById: '/getPetById/', // petID
     getLinkedPetsByUser: '/getLinkedPetsByUser/', // :userId
     updatePet: '/updatePet/', // petID
@@ -89,6 +90,29 @@ export class PetService {
           this.router.navigateByUrl('main/selectedPet');
         } else {
           Swal.fire('Error', resp.message, 'error');
+        }
+      });
+  }
+
+  getGinebra() {
+    const url = `${this.baseUrl}${this.routes.getGinebra}`;
+
+    this.httpClient
+      .get<IgetPetByIdResponse>(url)
+      .pipe(
+        tap(),
+        catchError((err: HttpErrorResponse) => {
+          return of(err.error);
+        })
+      )
+      .subscribe((resp: IgetPetByIdResponse) => {
+        if (resp.ok) {
+          const { pet } = resp;
+          if (!pet.imgUrl || pet.imgUrl === '') {
+            pet.imgUrl = 'assets/images/unknownPet.jpg';
+          }
+
+          this.selectedPetChange.next(pet);
         }
       });
   }

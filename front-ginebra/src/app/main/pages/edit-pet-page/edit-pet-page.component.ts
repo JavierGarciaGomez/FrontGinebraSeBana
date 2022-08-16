@@ -23,7 +23,7 @@ export class EditPetPageComponent implements OnInit {
     imgUrl: [''],
     petName: ['testPet', [Validators.required, Validators.minLength(2)]],
     bathPeriodicity: ['4', Validators.required],
-    isPublic: [true, Validators.required],
+    isPublic: [true],
     shampoos: ['Shampoo1, Shampoo2'],
     bathTypes: ['casero, estética'],
     bathers: ['Javier, América', Validators.required],
